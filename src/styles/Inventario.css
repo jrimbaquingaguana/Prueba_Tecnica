@@ -119,10 +119,40 @@ body {
   letter-spacing: 0.5px;
 }
 
+/* Animación de aparición de filas */
 .inventory-table tbody tr {
   background-color: #fefefe;
   transition: all 0.3s ease;
+  opacity: 0;                 /* empieza invisible */
+  transform: translateY(20px); /* desplazada hacia abajo */
+  animation: slideUp 0.5s forwards; /* animación general */
 }
+
+/* Animación secuencial por fila */
+.inventory-table tbody tr:nth-child(1) { animation-delay: 0s; }
+.inventory-table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+.inventory-table tbody tr:nth-child(3) { animation-delay: 0.2s; }
+.inventory-table tbody tr:nth-child(4) { animation-delay: 0.3s; }
+.inventory-table tbody tr:nth-child(5) { animation-delay: 0.4s; }
+.inventory-table tbody tr:nth-child(6) { animation-delay: 0.5s; }
+.inventory-table tbody tr:nth-child(7) { animation-delay: 0.6s; }
+.inventory-table tbody tr:nth-child(8) { animation-delay: 0.7s; }
+.inventory-table tbody tr:nth-child(9) { animation-delay: 0.8s; }
+.inventory-table tbody tr:nth-child(10) { animation-delay: 0.9s; }
+/* Puedes agregar más según la cantidad de filas esperadas */
+
+/* Keyframes para slide-up */
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 .inventory-table tbody tr:hover {
   background-color: #f0f8ff; /* azul muy claro al hover */
