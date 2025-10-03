@@ -1,9 +1,23 @@
-// src/Inventario.jsx
-import { useEffect, useRef, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaSearch, FaTrash, FaEdit, FaArrowUp, FaArrowDown } from "react-icons/fa";
+import React, { useEffect, useRef, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom"; 
+import { FaSearch, FaTrash, FaEdit, FaArrowUp, FaArrowDown, FaPlus } from "react-icons/fa";
 import "../styles/Inventario.css";
-import { confirmDelete } from "../components/Modal_eliminar";
+import { useDispatch, useSelector } from "react-redux";
+
+// Componentes
+import ModalEditar from "../components/ModalEditar";
+import CrearProducto from "../components/CrearProducto";
+import { confirmDelete } from "../components/ModalEliminar";
+
+// Redux
+import { 
+  fetchProducts,
+  removeProduct,
+  updateLocalProduct,
+  setSearch,
+  setSort,
+  setPage,
+} from "../redux/productSlice";
 
 const ActionButton = ({ type, onClick, icon }) => (
   <button className={`btn-${type}`} onClick={onClick} title={type}>
@@ -14,77 +28,43 @@ const ActionButton = ({ type, onClick, icon }) => (
 function Inventario() {
   const navigate = useNavigate();
   const containerRef = useRef(null);
+  const dispatch = useDispatch();
 
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
-  const [page, setPage] = useState(1);
-  const limit = 10;
+  // Redux state
+  const { items, loading, error, searchTerm, sortConfig, page, limit } = useSelector(
+    (state) => state.products
+  );
+  
+  const token = JSON.parse(localStorage.getItem("auth"))?.token;
 
-  const storedAuth = JSON.parse(localStorage.getItem("auth"));
-  const token = storedAuth?.token;
+  // Modal edición
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState(null);
 
-  // Cargar productos
+  // Modal crear
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
+
+  // Cargar productos al inicio
   useEffect(() => {
-    const loadProducts = async () => {
-      setLoading(true);
-      try {
-        const headers = { "Content-Type": "application/json" };
-        if (token) headers["Authorization"] = `Bearer ${token}`;
+    dispatch(fetchProducts(token));
+  }, [dispatch, token]);
 
-        const res = await fetch(`https://dummyjson.com/products?limit=100`, { headers });
-        if (!res.ok) throw new Error("Error al cargar productos");
-        const data = await res.json();
-
-        const products = data.products.map((p) => ({
-          ...p,
-          price: Number(p.price ?? 0),
-          rating: Number(p.rating ?? 0),
-          stock: Number(p.stock ?? 0),
-          title: p.title ?? "",
-          category: p.category ?? "",
-        }));
-
-        setItems(products);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProducts();
-  }, [token]);
-
-  // Animaciones al hacer scroll
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    if (containerRef.current) {
-      const elements = containerRef.current.querySelectorAll(".fade-in-scroll");
-      elements.forEach((el) => observer.observe(el));
-    }
-
-    return () => observer.disconnect();
-  }, [items, page, searchTerm]);
-
+  // Navegar a detalle de producto
   const handleView = (id) => navigate(`/producto/${id}`);
-  const handleEdit = (id) => navigate(`/editar-producto/${id}`);
 
-  // Eliminar producto usando SweetAlert2
+  // Editar producto
+  const handleEditClick = (product) => {
+    setProductToEdit(product);
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateProduct = (updatedProduct) => {
+    dispatch(updateLocalProduct(updatedProduct));
+  };
+
+  // Eliminar producto
+
   const handleDeleteClick = async (product) => {
     await confirmDelete(product, async () => {
       try {
@@ -94,22 +74,41 @@ function Inventario() {
             ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
             : { "Content-Type": "application/json" },
         });
-        if (!res.ok) throw new Error("Error al eliminar producto");
 
-        setItems((prev) => prev.filter((p) => p.id !== product.id));
+        if (!res.ok) throw new Error("No se pudo eliminar el producto"); // este error será capturado por confirmDelete
+
+        // ✅ Si todo sale bien, actualizamos el estado
+        dispatch(removeProduct(product.id));
       } catch (err) {
-        alert(err.message);
+        // No hacemos nada aquí, el error ya será mostrado por confirmDelete en un modal
+        throw err;
       }
     });
   };
 
-  // Ordenamiento
-  const requestSort = (key) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") direction = "desc";
-    setSortConfig({ key, direction });
-    setPage(0);
-    setTimeout(() => setPage(1), 0);
+
+
+
+  // Crear producto
+  const handleCreateProduct = async (newProduct) => {
+    try {
+      setCreating(true);
+      const res = await fetch("https://dummyjson.com/products/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newProduct),
+      });
+      if (!res.ok) throw new Error("Error al crear producto");
+      const created = await res.json();
+
+      // Actualizar Redux local
+      dispatch(fetchProducts(token));
+      setIsCreateModalOpen(false);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setCreating(false);
+    }
   };
 
   // Filtrado y ordenamiento
@@ -160,52 +159,56 @@ function Inventario() {
 
   return (
     <div className="inventory-container" ref={containerRef}>
-      <h2 className="fade-in-scroll">Inventario de Productos</h2>
+      <h2>Inventario de Productos</h2>
+
+      <div className="search-create-container">
+        <div className="search-bar">
+          <FaSearch className="search-icon" />
+          <input
+            type="text"
+            placeholder="Buscar producto..."
+            value={searchTerm}
+            onChange={(e) => dispatch(setSearch(e.target.value))}
+          />
+        </div>
+        <button className="btn-create" onClick={() => setIsCreateModalOpen(true)}>
+          <FaPlus /> Crear Producto
+        </button>
+      </div>
+
 
       {loading ? (
-        <div className="loading-inventory fade-in-scroll">
+        <div className="loading-inventory">
           <img src="https://i.gifer.com/ZZ5H.gif" alt="Cargando" className="loader-gif" />
           <p>Cargando productos...</p>
         </div>
       ) : error ? (
-        <p className="error fade-in-scroll">{error}</p>
+        <p className="error">{error}</p>
       ) : items.length === 0 ? (
-        <p className="no-results fade-in-scroll">No hay productos en el inventario.</p>
+        <p className="no-results">No hay productos en el inventario.</p>
       ) : (
         <>
-          <div className="search-container fade-in-scroll">
-            <input
-              type="text"
-              placeholder="Buscar producto..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setPage(1);
-              }}
-            />
-          </div>
-
           {paginatedProducts.length === 0 ? (
-            <p className="no-results fade-in-scroll">No se ha encontrado el producto</p>
+            <p className="no-results">No se ha encontrado el producto</p>
           ) : (
             <>
-              <table className="inventory-table fade-in-scroll">
+              <table className="inventory-table">
                 <thead>
                   <tr>
                     <th>Imagen</th>
-                    <th onClick={() => requestSort("title")} className="sortable">
+                    <th onClick={() => dispatch(setSort({ key: "title", direction: sortConfig.direction === "asc" ? "desc" : "asc" }))} className="sortable">
                       Título {getSortIcon("title")}
                     </th>
-                    <th onClick={() => requestSort("category")} className="sortable">
+                    <th onClick={() => dispatch(setSort({ key: "category", direction: sortConfig.direction === "asc" ? "desc" : "asc" }))} className="sortable">
                       Categoría {getSortIcon("category")}
                     </th>
-                    <th onClick={() => requestSort("price")} className="sortable">
+                    <th onClick={() => dispatch(setSort({ key: "price", direction: sortConfig.direction === "asc" ? "desc" : "asc" }))} className="sortable">
                       Precio {getSortIcon("price")}
                     </th>
-                    <th onClick={() => requestSort("rating")} className="sortable">
+                    <th onClick={() => dispatch(setSort({ key: "rating", direction: sortConfig.direction === "asc" ? "desc" : "asc" }))} className="sortable">
                       Rating {getSortIcon("rating")}
                     </th>
-                    <th onClick={() => requestSort("stock")} className="sortable">
+                    <th onClick={() => dispatch(setSort({ key: "stock", direction: sortConfig.direction === "asc" ? "desc" : "asc" }))} className="sortable">
                       Stock {getSortIcon("stock")}
                     </th>
                     <th>Acciones</th>
@@ -213,7 +216,7 @@ function Inventario() {
                 </thead>
                 <tbody>
                   {paginatedProducts.map((prod) => (
-                    <tr key={prod.id} className="fade-in-scroll">
+                    <tr key={prod.id}>
                       <td>
                         <img src={prod.thumbnail} alt={prod.title} className="product-image" />
                       </td>
@@ -224,7 +227,7 @@ function Inventario() {
                       <td>{prod.stock}</td>
                       <td className="action-buttons">
                         <ActionButton type="details" onClick={() => handleView(prod.id)} icon={<FaSearch />} />
-                        <ActionButton type="edit" onClick={() => handleEdit(prod.id)} icon={<FaEdit />} />
+                        <ActionButton type="edit" onClick={() => handleEditClick(prod)} icon={<FaEdit />} />
                         <ActionButton type="delete" onClick={() => handleDeleteClick(prod)} icon={<FaTrash />} />
                       </td>
                     </tr>
@@ -232,14 +235,14 @@ function Inventario() {
                 </tbody>
               </table>
 
-              <div className="pagination fade-in-scroll">
-                <button onClick={() => setPage(currentPage - 1)} disabled={currentPage === 1}>
+              <div className="pagination">
+                <button onClick={() => dispatch(setPage(currentPage - 1))} disabled={currentPage === 1}>
                   ← Anterior
                 </button>
                 <span>
                   Página {currentPage} de {totalPages}
                 </span>
-                <button onClick={() => setPage(currentPage + 1)} disabled={currentPage === totalPages}>
+                <button onClick={() => dispatch(setPage(currentPage + 1))} disabled={currentPage === totalPages}>
                   Siguiente →
                 </button>
               </div>
@@ -247,6 +250,20 @@ function Inventario() {
           )}
         </>
       )}
+
+      <ModalEditar
+        isOpen={isEditModalOpen}
+        product={productToEdit}
+        onClose={() => setIsEditModalOpen(false)}
+        onUpdate={handleUpdateProduct}
+      />
+
+      <CrearProducto
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onCreate={handleCreateProduct}
+        loading={creating}
+      />
     </div>
   );
 }

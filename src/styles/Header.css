@@ -16,7 +16,9 @@
 .header-title {
   font-size: 1.5rem;
   color: #fff;
-  margin: 0;
+  margin: 0 0 0;
+  
+  margin: 0 0 0 10px; 
 }
 
 /* Información del usuario */
@@ -46,7 +48,7 @@
 
 /* Botón de cerrar sesión */
 .logout-button {
-  background-color: #0c2461; /* azul más oscuro */
+  background-color: #a70707; /* azul más oscuro */
   color: #fff;
   border: none;
   padding: 8px 16px;
@@ -54,6 +56,7 @@
   font-weight: 500;
   border-radius: 6px;
   cursor: pointer;
+  margin: 0 0 0 5px;
   transition: all 0.2s ease;
   flex-shrink: 0; /* evita que el botón se encoja */
 }

@@ -1,0 +1,211 @@
+// src/components/CrearProducto.jsx
+import React, { useState } from "react";
+import Swal from "sweetalert2";
+import { useDispatch, useSelector } from "react-redux";
+import "../styles/CrearProducto.css";
+
+// Redux
+import { createProduct } from "../redux/productSlice";
+
+const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
+  const dispatch = useDispatch();
+  const items = useSelector((state) => state.products.items);
+
+  // Categorías únicas de los productos existentes
+  const categories = [...new Set(items.map((p) => p.category).filter(Boolean))];
+
+  const [formData, setFormData] = useState({
+    title: "",
+    price: 1,
+    category: "",
+    description: "",
+    stock: 1,
+    images: [],
+  });
+
+  const [previewImages, setPreviewImages] = useState([]);
+  const [newCategory, setNewCategory] = useState("");
+
+  if (!isOpen) return null;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if ((name === "price" || name === "stock") && Number(value) <= 0) return;
+
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    const allImages = [...formData.images, ...files];
+    setFormData({ ...formData, images: allImages });
+
+    const previews = allImages.map((file) => URL.createObjectURL(file));
+    setPreviewImages(previews);
+  };
+
+  const handleRemoveImage = (index) => {
+    const newImages = formData.images.filter((_, i) => i !== index);
+    setFormData({ ...formData, images: newImages });
+    setPreviewImages(newImages.map((file) => URL.createObjectURL(file)));
+  };
+
+  const handleCategoryChange = (e) => {
+    setFormData({ ...formData, category: e.target.value });
+    setNewCategory("");
+  };
+
+  const handleNewCategoryChange = (e) => {
+    setNewCategory(e.target.value);
+    setFormData({ ...formData, category: "" });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validaciones
+    if (!formData.title.trim()) {
+      Swal.fire("Error", "El título es obligatorio.", "error");
+      return;
+    }
+    if (Number(formData.price) <= 0) {
+      Swal.fire("Error", "El precio debe ser mayor a 0.", "error");
+      return;
+    }
+    if (Number(formData.stock) <= 0) {
+      Swal.fire("Error", "El stock debe ser mayor a 0.", "error");
+      return;
+    }
+
+    const finalCategory = newCategory.trim() !== "" ? newCategory.trim() : formData.category;
+    if (!finalCategory) {
+      Swal.fire("Error", "Debes seleccionar o ingresar una categoría.", "error");
+      return;
+    }
+
+    // Convertir imágenes a base64
+    const imageUrls = await Promise.all(
+      formData.images.map(
+        (file) =>
+          new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+          })
+      )
+    );
+
+    // Producto final a enviar
+    const productToSend = {
+      title: formData.title,
+      price: Number(formData.price),
+      stock: Number(formData.stock),
+      category: finalCategory,
+      description: formData.description,
+      images: imageUrls,
+    };
+
+    try {
+      // Llamar thunk solo con el producto (token se obtiene del slice)
+      const created = await dispatch(createProduct(productToSend)).unwrap();
+
+      Swal.fire("¡Éxito!", `Producto "${created.title}" creado correctamente.`, "success");
+
+      // Resetear formulario
+      setFormData({
+        title: "",
+        price: 1,
+        category: "",
+        description: "",
+        stock: 1,
+        images: [],
+      });
+      setPreviewImages([]);
+      setNewCategory("");
+
+      onCreate(created);
+      onClose();
+    } catch (err) {
+      Swal.fire("Error", err.message || "Error al crear producto", "error");
+    }
+  };
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h3>Crear Producto</h3>
+        <form onSubmit={handleSubmit} className="modal-create-form">
+          <label>
+            Título:
+            <input type="text" name="title" value={formData.title} onChange={handleChange} required />
+          </label>
+
+          <label>
+            Precio:
+            <input type="number" name="price" value={formData.price} onChange={handleChange} min={1} required />
+          </label>
+
+          <label>
+            Stock:
+            <input type="number" name="stock" value={formData.stock} onChange={handleChange} min={1} required />
+          </label>
+
+          <label>
+            Categoría:
+            <select value={formData.category} onChange={handleCategoryChange}>
+              <option value="">Ingresar categoría</option>
+              {categories.map((cat, idx) => (
+                <option key={idx} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </label>
+
+          {formData.category === "" && (
+            <label>
+              O crear nueva categoría:
+              <input
+                type="text"
+                value={newCategory}
+                onChange={handleNewCategoryChange}
+                placeholder="Nueva categoría"
+              />
+            </label>
+          )}
+
+          <label>
+            Descripción:
+            <textarea name="description" value={formData.description} onChange={handleChange}></textarea>
+          </label>
+
+          <label>
+            Imágenes:
+            <input type="file" multiple accept="image/*" onChange={handleImageChange} />
+          </label>
+
+          {previewImages.length > 0 && (
+            <div className="preview-images">
+              {previewImages.map((src, idx) => (
+                <div key={idx} className="preview-container">
+                  <img src={src} alt={`preview-${idx}`} className="preview-img" />
+                  <button type="button" className="remove-image" onClick={() => handleRemoveImage(idx)}>×</button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="modal-buttons">
+            <button type="button" className="btn-cancel" onClick={onClose} disabled={loading}>
+              Cancelar
+            </button>
+            <button type="submit" className="btn-confirm" disabled={loading}>
+              {loading ? "Creando..." : "Crear"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default CrearProducto;

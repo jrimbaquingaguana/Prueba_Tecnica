@@ -2,21 +2,45 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // -------------------------
-// Thunks asíncronos
+// Helpers para LocalStorage
+// -------------------------
+const STORAGE_KEY = "products";
+const DELETED_KEY = "deletedProducts";
+
+const saveToLocalStorage = (products) => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+};
+
+const loadFromLocalStorage = () => {
+  const data = localStorage.getItem(STORAGE_KEY);
+  return data ? JSON.parse(data) : [];
+};
+
+const saveDeletedIds = (ids) => {
+  localStorage.setItem(DELETED_KEY, JSON.stringify(ids));
+};
+
+const loadDeletedIds = () => {
+  const data = localStorage.getItem(DELETED_KEY);
+  return data ? JSON.parse(data) : [];
+};
+
+// -------------------------
+// Thunks asíncronos usando token del state
 // -------------------------
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
-  async (token, { rejectWithValue }) => {
+  async (_, { rejectWithValue, getState }) => {
     try {
+      const { token } = getState().auth;
       const headers = { "Content-Type": "application/json" };
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
-      const res = await fetch(`https://dummyjson.com/products?limit=100`, { headers });
+      const res = await fetch(`https://dummyjson.com/products?limit=200`, { headers });
       if (!res.ok) throw new Error("Error al cargar productos");
       const data = await res.json();
 
-      // Convertir campos numéricos correctamente
-      const products = data.products.map((p) => ({
+      return data.products.map((p) => ({
         ...p,
         price: Number(p.price ?? 0),
         rating: Number(p.rating ?? 0),
@@ -24,8 +48,6 @@ export const fetchProducts = createAsyncThunk(
         title: p.title ?? "",
         category: p.category ?? "",
       }));
-
-      return products;
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -34,8 +56,9 @@ export const fetchProducts = createAsyncThunk(
 
 export const fetchProduct = createAsyncThunk(
   "products/fetchProduct",
-  async ({ id, token }, { rejectWithValue }) => {
+  async (id, { rejectWithValue, getState }) => {
     try {
+      const { token } = getState().auth;
       const headers = { "Content-Type": "application/json" };
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
@@ -50,8 +73,9 @@ export const fetchProduct = createAsyncThunk(
 
 export const updateProduct = createAsyncThunk(
   "products/updateProduct",
-  async ({ id, token, product }, { rejectWithValue }) => {
+  async ({ id, product }, { rejectWithValue, getState }) => {
     try {
+      const { token } = getState().auth;
       const headers = { "Content-Type": "application/json" };
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
@@ -68,13 +92,34 @@ export const updateProduct = createAsyncThunk(
   }
 );
 
+export const createProduct = createAsyncThunk(
+  "products/createProduct",
+  async (product, { rejectWithValue, getState }) => {
+    try {
+      const { token } = getState().auth;
+      const headers = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const res = await fetch("https://dummyjson.com/products/add", {
+        method: "POST",
+        headers,
+        body: JSON.stringify(product),
+      });
+      if (!res.ok) throw new Error("Error al crear producto");
+      return await res.json();
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 // -------------------------
 // Slice principal
 // -------------------------
 const productSlice = createSlice({
   name: "products",
   initialState: {
-    items: [],
+    items: loadFromLocalStorage(),
     product: null,
     loading: false,
     saving: false,
@@ -83,6 +128,7 @@ const productSlice = createSlice({
     sortConfig: { key: "", direction: "asc" },
     page: 1,
     limit: 10,
+    deletedIds: loadDeletedIds(),
   },
   reducers: {
     clearError: (state) => {
@@ -90,19 +136,22 @@ const productSlice = createSlice({
     },
     removeProduct: (state, action) => {
       state.items = state.items.filter((p) => p.id !== action.payload);
+      state.deletedIds.push(action.payload);
+      saveToLocalStorage(state.items);
+      saveDeletedIds(state.deletedIds);
     },
     updateLocalProduct: (state, action) => {
       state.product = { ...state.product, ...action.payload };
       const idx = state.items.findIndex((p) => p.id === action.payload.id);
       if (idx !== -1) state.items[idx] = { ...state.items[idx], ...action.payload };
+      saveToLocalStorage(state.items);
     },
     setSearch: (state, action) => {
       state.searchTerm = action.payload;
-      state.page = 1; // reinicia la página al buscar
+      state.page = 1;
     },
     setSort: (state, action) => {
       state.sortConfig = action.payload;
-      // Ajustar la página a 1 para evitar que se muestre vacía
       state.page = 1;
     },
     setPage: (state, action) => {
@@ -118,8 +167,12 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload;
-        state.page = 1; // aseguramos que la primera página se muestre
+        const apiProducts = action.payload;
+        const deletedIds = state.deletedIds;
+        const filteredApi = apiProducts.filter((p) => !deletedIds.includes(p.id));
+        const localProducts = state.items.filter((p) => !filteredApi.some((apiP) => apiP.id === p.id));
+        state.items = [...filteredApi, ...localProducts];
+        saveToLocalStorage(state.items);
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
@@ -150,14 +203,40 @@ const productSlice = createSlice({
         state.product = action.payload;
         const idx = state.items.findIndex((p) => p.id === action.payload.id);
         if (idx !== -1) state.items[idx] = action.payload;
+        saveToLocalStorage(state.items);
       })
       .addCase(updateProduct.rejected, (state, action) => {
+        state.saving = false;
+        state.error = action.payload;
+      })
+
+      // createProduct
+      .addCase(createProduct.pending, (state) => {
+        state.saving = true;
+        state.error = null;
+      })
+      .addCase(createProduct.fulfilled, (state, action) => {
+        state.saving = false;
+
+        // Agregar producto solo si no existe
+        const exists = state.items.some((p) => p.id === action.payload.id);
+        if (!exists) {
+          state.items.push(action.payload);
+        }
+
+        state.product = action.payload;
+        saveToLocalStorage(state.items);
+      })
+      .addCase(createProduct.rejected, (state, action) => {
         state.saving = false;
         state.error = action.payload;
       });
   },
 });
 
+// -------------------------
+// Exportaciones
+// -------------------------
 export const {
   clearError,
   removeProduct,

@@ -1,3 +1,4 @@
+// src/redux/authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // Login con DummyJSON
@@ -15,10 +16,10 @@ export const loginUser = createAsyncThunk(
 
       const data = await res.json();
 
-      // Guardar solo lo esencial en localStorage
+      // Guardar token y usuario en localStorage
       const authData = {
         token: data.token,
-        user: { id: data.id, username: data.username, firstName: data.firstName , image: data.image},
+        user: { id: data.id, username: data.username, firstName: data.firstName, image: data.image },
       };
       localStorage.setItem("auth", JSON.stringify(authData));
 
@@ -29,11 +30,14 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// Cargar auth desde localStorage
-export const loadStoredAuth = createAsyncThunk("auth/loadStoredAuth", async () => {
-  const storedAuth = localStorage.getItem("auth");
-  return storedAuth ? JSON.parse(storedAuth) : null;
-});
+// Cargar auth desde localStorage al iniciar la app
+export const loadStoredAuth = createAsyncThunk(
+  "auth/loadStoredAuth",
+  async () => {
+    const storedAuth = localStorage.getItem("auth");
+    return storedAuth ? JSON.parse(storedAuth) : null;
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",

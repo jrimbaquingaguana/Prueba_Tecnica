@@ -9,10 +9,11 @@ function ProductoDetalle() {
   const navigate = useNavigate();
 
   const reduxToken = useSelector((state) => state.auth.token);
-  const [token, setToken] = useState(reduxToken || localStorage.getItem("token") || "");
+  const [token] = useState(reduxToken || localStorage.getItem("token") || "");
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [relatedProducts, setRelatedProducts] = useState([]);
 
@@ -21,27 +22,43 @@ function ProductoDetalle() {
 
     const fetchProduct = async () => {
       setLoading(true);
+      setError("");
       try {
         const headers = { 
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         };
 
+        // Obtener producto
         const res = await fetch(`https://dummyjson.com/products/${id}`, { headers });
-        if (!res.ok) throw new Error("Error al cargar el producto");
+        if (!res.ok) throw new Error("Producto no encontrado.");
         const data = await res.json();
         setProduct(data);
 
+        // Productos relacionados por categoría
         const relatedRes = await fetch(
           `https://dummyjson.com/products/category/${encodeURIComponent(data.category)}?limit=6`,
           { headers }
         );
-        if (!relatedRes.ok) throw new Error("Error al cargar productos relacionados");
-        const relatedData = await relatedRes.json();
-        setRelatedProducts(relatedData.products.filter((p) => p.id !== data.id));
+        if (relatedRes.ok) {
+          const relatedData = await relatedRes.json();
+          setRelatedProducts(relatedData.products.filter((p) => p.id !== data.id));
+        }
       } catch (err) {
         console.error(err);
-        alert(err.message);
+        setError(err.message);
+        setProduct(null);
+
+        // Sugerencias genéricas si no hay producto
+        try {
+          const resAll = await fetch(`https://dummyjson.com/products?limit=6`, { 
+            headers: { "Content-Type": "application/json" } 
+          });
+          if (resAll.ok) {
+            const dataAll = await resAll.json();
+            setRelatedProducts(dataAll.products);
+          }
+        } catch {}
       } finally {
         setLoading(false);
       }
@@ -63,8 +80,39 @@ function ProductoDetalle() {
     </div>
   );
 
-  if (!product) return <p>No se encontró el producto</p>;
+  // Producto no encontrado
+  if (!product) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "50px" }}>
+        <p style={{ color: "#e74c3c", fontSize: "1.3rem", marginBottom: "20px" }}>
+          Producto no encontrado.
+        </p>
 
+        {relatedProducts.length > 0 && (
+          <>
+            <p>Te sugerimos estos productos:</p>
+            <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "15px", marginTop: "15px" }}>
+              {relatedProducts.map((p) => (
+                <div key={p.id} style={{ width: "120px", cursor: "pointer" }} onClick={() => navigate(`/producto/${p.id}`)}>
+                  <img src={p.thumbnail} alt={p.title} style={{ width: "100%", borderRadius: "8px" }} />
+                  <p style={{ fontSize: "0.9rem", marginTop: "5px" }}>{p.title}</p>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        <button 
+          style={{ marginTop: "30px", padding: "8px 15px", borderRadius: "6px", backgroundColor: "#4a90e2", color: "#fff", border: "none", cursor: "pointer" }}
+          onClick={() => navigate(-1)}
+        >
+          ← Volver
+        </button>
+      </div>
+    );
+  }
+
+  // Render normal si el producto existe
   const images = product.images.length > 0 ? product.images : [product.thumbnail];
 
   const prevImage = () =>
@@ -81,7 +129,6 @@ function ProductoDetalle() {
         <div className="main-image-container">
           <img src={images[mainImageIndex]} alt={product.title} className="main-image" />
 
-          {/* Flechas modernas dentro de la imagen */}
           {images.length > 1 && (
             <>
               <button className="image-arrow left" onClick={prevImage}>
@@ -90,8 +137,6 @@ function ProductoDetalle() {
               <button className="image-arrow right" onClick={nextImage}>
                 <FaChevronRight />
               </button>
-
-              {/* Número de índice */}
               <div className="carousel-index-overlay">
                 {mainImageIndex + 1} / {images.length}
               </div>
