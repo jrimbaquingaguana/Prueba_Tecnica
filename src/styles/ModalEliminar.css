@@ -25,16 +25,24 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
-/* Botón confirmar rojo */
 .swal2-confirm-custom {
-  background-color: #e74c3c !important;
-  color: #fff !important;
+  position: absolute;      /* posición absoluta dentro del popup */
+  bottom: 20px;            /* distancia desde la parte inferior del popup */
+  left: 50%;               /* centrado horizontal */
+  transform: translateX(-50%); /* centrado exacto */
+  background-color: #e74c3c !important; /* color rojo */
+  color: #fff !important;  /* texto blanco */
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 9999;           /* asegurar que quede encima */
+  transition: all 0.2s ease;
 }
 
 .swal2-confirm-custom:hover {
-  background-color: #c0392b !important;
+  background-color: #c0392b !important; /* rojo más oscuro al hover */
 }
-
 /* Botón cancelar gris */
 .swal2-cancel-custom {
   background-color: #e0e0e0 !important;

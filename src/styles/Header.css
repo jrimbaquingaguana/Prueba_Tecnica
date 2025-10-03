@@ -1,23 +1,28 @@
-/* Header */
+/* Header: ocupa toda la pantalla */
 .header {
-  max-width: 1000px; 
-  width: 95%; 
-  margin: 0 auto; 
+  width: 100%;
   background-color: #1f3a93; 
+  display: flex;
+  justify-content: center; /* centra el contenido interno */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px 0; /* solo vertical, horizontal lo controla el contenedor interno */
+  box-sizing: border-box;
+}
+
+/* Contenedor interno del header: limita el ancho */
+.header-container {
+  max-width: 1000px;
+  width: 95%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px; /* más compacto verticalmente */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  padding: 0 20px; /* padding horizontal dentro del header */
 }
 
 /* Título */
 .header-title {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   color: #fff;
-  margin: 0 0 0;
-  
   margin: 0 0 0 10px; 
 }
 
@@ -25,16 +30,17 @@
 .user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
-  max-width: 400px; /* limitar ancho para que el botón no crezca demasiado */
-  flex-wrap: wrap; /* se ajusta en pantallas pequeñas */
+  gap: 15px;
+  max-width: 400px;
+  flex-wrap: wrap;
+  margin-left: 650px;
 }
 
 /* Nombre de usuario */
 .username {
   color: #fff;
   font-weight: 500;
-  white-space: nowrap; /* evita que se rompa el texto */
+  white-space: nowrap;
 }
 
 /* Foto de perfil */
@@ -48,7 +54,7 @@
 
 /* Botón de cerrar sesión */
 .logout-button {
-  background-color: #a70707; /* azul más oscuro */
+  background-color: #a70707;
   color: #fff;
   border: none;
   padding: 8px 16px;
@@ -56,22 +62,22 @@
   font-weight: 500;
   border-radius: 6px;
   cursor: pointer;
-  margin: 0 0 0 5px;
+  margin-left: 5px;
   transition: all 0.2s ease;
-  flex-shrink: 0; /* evita que el botón se encoja */
+  flex-shrink: 0;
 }
 
 .logout-button:hover {
-  background-color: #081f4c; /* azul más intenso al hover */
+  background-color: #081f4c;
   transform: scale(1.05);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .header {
+  .header-container {
     flex-direction: column;
     gap: 8px;
-    padding: 10px 15px;
+    padding: 0 15px;
   }
 
   .header-title {
