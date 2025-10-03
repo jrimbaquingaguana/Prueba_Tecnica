@@ -1,7 +1,9 @@
 // src/redux/authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+// -------------------------
 // Login con DummyJSON
+// -------------------------
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ username, password }, { rejectWithValue }) => {
@@ -16,10 +18,22 @@ export const loginUser = createAsyncThunk(
 
       const data = await res.json();
 
+      // Verificamos que el accessToken exista
+      if (!data.accessToken) throw new Error("No se recibió accessToken del servidor");
+
       // Guardar token y usuario en localStorage
       const authData = {
-        token: data.token,
-        user: { id: data.id, username: data.username, firstName: data.firstName, image: data.image },
+        token: data.accessToken,        // aquí usamos accessToken
+        refreshToken: data.refreshToken, // opcional
+        user: {
+          id: data.id,
+          username: data.username,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          gender: data.gender,
+          image: data.image || null,
+        },
       };
       localStorage.setItem("auth", JSON.stringify(authData));
 
@@ -30,7 +44,9 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// Cargar auth desde localStorage al iniciar la app
+// -------------------------
+// Cargar auth desde localStorage
+// -------------------------
 export const loadStoredAuth = createAsyncThunk(
   "auth/loadStoredAuth",
   async () => {
@@ -44,6 +60,7 @@ const authSlice = createSlice({
   initialState: {
     user: null,
     token: null,
+    refreshToken: null,
     loading: false,
     error: null,
     showWelcome: false,
@@ -52,6 +69,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
+      state.refreshToken = null;
       state.showWelcome = false;
       localStorage.removeItem("auth");
     },
@@ -69,7 +87,10 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.refreshToken = action.payload.refreshToken;
         state.showWelcome = true;
+        // Guardamos nuevamente en localStorage
+        localStorage.setItem("auth", JSON.stringify(action.payload));
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -79,6 +100,7 @@ const authSlice = createSlice({
         if (action.payload) {
           state.user = action.payload.user;
           state.token = action.payload.token;
+          state.refreshToken = action.payload.refreshToken;
         }
       });
   },

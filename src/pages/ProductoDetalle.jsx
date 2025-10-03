@@ -1,15 +1,15 @@
+// src/pages/ProductoDetalle.jsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useSelector } from "react-redux";
 import "../styles/ProductoDetalle.css";
 
 function ProductoDetalle() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const reduxToken = useSelector((state) => state.auth.token);
-  const [token] = useState(reduxToken || localStorage.getItem("token") || "");
+  // Obtener token desde localStorage (accessToken)
+  const token = JSON.parse(localStorage.getItem("auth"))?.token || "";
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,15 +18,13 @@ function ProductoDetalle() {
   const [relatedProducts, setRelatedProducts] = useState([]);
 
   useEffect(() => {
-    if (!token) return;
-
-    const fetchProduct = async () => {
+    const fetchProductData = async () => {
       setLoading(true);
       setError("");
       try {
         const headers = { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          "Authorization": `Bearer ${token}` // Token incluido
         };
 
         // Obtener producto
@@ -49,7 +47,7 @@ function ProductoDetalle() {
         setError(err.message);
         setProduct(null);
 
-        // Sugerencias genéricas si no hay producto
+        // Sugerencias genéricas si falla
         try {
           const resAll = await fetch(`https://dummyjson.com/products?limit=6`, { 
             headers: { "Content-Type": "application/json" } 
@@ -64,23 +62,21 @@ function ProductoDetalle() {
       }
     };
 
-    fetchProduct();
+    fetchProductData();
   }, [id, token]);
 
-  if (!token) return (
-    <p style={{ textAlign: "center", marginTop: "50px", color: "#e74c3c" }}>
-      No estás autorizado para ver este producto. Por favor inicia sesión.
-    </p>
-  );
+  // Ya no mostramos mensaje de “no token”, asumimos que el token existe
+  // Si no existe, la petición fallará por 401 y se mostrarán sugerencias
 
-  if (loading) return (
-    <div className="loading-inventory">
-      <img src="https://i.gifer.com/ZZ5H.gif" alt="Cargando" className="loader-gif" />
-      <p>Cargando producto...</p>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="loading-inventory">
+        <img src="https://i.gifer.com/ZZ5H.gif" alt="Cargando" className="loader-gif" />
+        <p>Cargando producto...</p>
+      </div>
+    );
+  }
 
-  // Producto no encontrado
   if (!product) {
     return (
       <div style={{ textAlign: "center", marginTop: "50px" }}>
@@ -112,9 +108,7 @@ function ProductoDetalle() {
     );
   }
 
-  // Render normal si el producto existe
   const images = product.images.length > 0 ? product.images : [product.thumbnail];
-
   const prevImage = () =>
     setMainImageIndex(prev => (prev === 0 ? images.length - 1 : prev - 1));
   const nextImage = () =>
@@ -128,7 +122,6 @@ function ProductoDetalle() {
       <div className="product-main">
         <div className="main-image-container">
           <img src={images[mainImageIndex]} alt={product.title} className="main-image" />
-
           {images.length > 1 && (
             <>
               <button className="image-arrow left" onClick={prevImage}>

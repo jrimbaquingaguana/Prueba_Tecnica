@@ -11,7 +11,7 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
   const dispatch = useDispatch();
   const items = useSelector((state) => state.products.items);
 
-  // Categorías únicas de los productos existentes
+  // Obtenemos categorías únicas de los productos existentes
   const categories = [...new Set(items.map((p) => p.category).filter(Boolean))];
 
   const [formData, setFormData] = useState({
@@ -22,7 +22,6 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
     stock: 1,
     images: [],
   });
-
   const [previewImages, setPreviewImages] = useState([]);
   const [newCategory, setNewCategory] = useState("");
 
@@ -31,7 +30,8 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if ((name === "price" || name === "stock") && Number(value) <= 0) return;
+    if (name === "price" && Number(value) <= 0) return;
+    if (name === "stock" && Number(value) <= 0) return;
 
     setFormData({ ...formData, [name]: value });
   };
@@ -40,7 +40,6 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
     const files = Array.from(e.target.files);
     const allImages = [...formData.images, ...files];
     setFormData({ ...formData, images: allImages });
-
     const previews = allImages.map((file) => URL.createObjectURL(file));
     setPreviewImages(previews);
   };
@@ -53,26 +52,27 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
 
   const handleCategoryChange = (e) => {
     setFormData({ ...formData, category: e.target.value });
-    setNewCategory("");
+    setNewCategory(""); // limpiar nueva categoría si se selecciona existente
   };
 
   const handleNewCategoryChange = (e) => {
     setNewCategory(e.target.value);
-    setFormData({ ...formData, category: "" });
+    setFormData({ ...formData, category: "" }); // limpiar categoría seleccionada
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validaciones
-    if (!formData.title.trim()) {
+    if (!formData.title) {
       Swal.fire("Error", "El título es obligatorio.", "error");
       return;
     }
+
     if (Number(formData.price) <= 0) {
       Swal.fire("Error", "El precio debe ser mayor a 0.", "error");
       return;
     }
+
     if (Number(formData.stock) <= 0) {
       Swal.fire("Error", "El stock debe ser mayor a 0.", "error");
       return;
@@ -84,7 +84,6 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
       return;
     }
 
-    // Convertir imágenes a base64
     const imageUrls = await Promise.all(
       formData.images.map(
         (file) =>
@@ -96,31 +95,19 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
       )
     );
 
-    // Producto final a enviar
     const productToSend = {
-      title: formData.title,
-      price: Number(formData.price),
-      stock: Number(formData.stock),
+      ...formData,
       category: finalCategory,
-      description: formData.description,
       images: imageUrls,
     };
 
     try {
-      // Llamar thunk solo con el producto (token se obtiene del slice)
-      const created = await dispatch(createProduct(productToSend)).unwrap();
+      const token = JSON.parse(localStorage.getItem("auth"))?.token;
+      const created = await dispatch(createProduct({ token, product: productToSend })).unwrap();
 
       Swal.fire("¡Éxito!", `Producto "${created.title}" creado correctamente.`, "success");
 
-      // Resetear formulario
-      setFormData({
-        title: "",
-        price: 1,
-        category: "",
-        description: "",
-        stock: 1,
-        images: [],
-      });
+      setFormData({ title: "", price: 1, category: "", description: "", stock: 1, images: [] });
       setPreviewImages([]);
       setNewCategory("");
 

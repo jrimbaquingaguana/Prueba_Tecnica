@@ -134,18 +134,29 @@ const productSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+
+    // Nuevo producto local (se guarda directamente en localStorage)
+    addLocalProduct: (state, action) => {
+      const newProduct = { ...action.payload, id: Date.now() }; // ID único
+      state.items.push(newProduct);
+      state.product = newProduct;
+      saveToLocalStorage(state.items);
+    },
+
     removeProduct: (state, action) => {
       state.items = state.items.filter((p) => p.id !== action.payload);
       state.deletedIds.push(action.payload);
       saveToLocalStorage(state.items);
       saveDeletedIds(state.deletedIds);
     },
+
     updateLocalProduct: (state, action) => {
       state.product = { ...state.product, ...action.payload };
       const idx = state.items.findIndex((p) => p.id === action.payload.id);
       if (idx !== -1) state.items[idx] = { ...state.items[idx], ...action.payload };
       saveToLocalStorage(state.items);
     },
+
     setSearch: (state, action) => {
       state.searchTerm = action.payload;
       state.page = 1;
@@ -218,7 +229,6 @@ const productSlice = createSlice({
       .addCase(createProduct.fulfilled, (state, action) => {
         state.saving = false;
 
-        // Agregar producto solo si no existe
         const exists = state.items.some((p) => p.id === action.payload.id);
         if (!exists) {
           state.items.push(action.payload);
@@ -238,6 +248,7 @@ const productSlice = createSlice({
 // Exportaciones
 // -------------------------
 export const {
+  addLocalProduct,
   clearError,
   removeProduct,
   updateLocalProduct,

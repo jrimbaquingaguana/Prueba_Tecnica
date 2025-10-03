@@ -1,3 +1,4 @@
+// src/pages/Inventario.jsx
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom"; 
 import { FaSearch, FaTrash, FaEdit, FaArrowUp, FaArrowDown, FaPlus } from "react-icons/fa";
@@ -35,6 +36,7 @@ function Inventario() {
     (state) => state.products
   );
   
+  // Token desde localStorage
   const token = JSON.parse(localStorage.getItem("auth"))?.token;
 
   // Modal edición
@@ -47,7 +49,9 @@ function Inventario() {
 
   // Cargar productos al inicio
   useEffect(() => {
-    dispatch(fetchProducts(token));
+    if (token) {
+      dispatch(fetchProducts(token));
+    }
   }, [dispatch, token]);
 
   // Navegar a detalle de producto
@@ -64,7 +68,6 @@ function Inventario() {
   };
 
   // Eliminar producto
-
   const handleDeleteClick = async (product) => {
     await confirmDelete(product, async () => {
       try {
@@ -75,19 +78,15 @@ function Inventario() {
             : { "Content-Type": "application/json" },
         });
 
-        if (!res.ok) throw new Error("No se pudo eliminar el producto"); // este error será capturado por confirmDelete
+        if (!res.ok) throw new Error("No se pudo eliminar el producto");
 
-        // ✅ Si todo sale bien, actualizamos el estado
+        // Actualizamos Redux
         dispatch(removeProduct(product.id));
       } catch (err) {
-        // No hacemos nada aquí, el error ya será mostrado por confirmDelete en un modal
         throw err;
       }
     });
   };
-
-
-
 
   // Crear producto
   const handleCreateProduct = async (newProduct) => {
@@ -95,13 +94,16 @@ function Inventario() {
       setCreating(true);
       const res = await fetch("https://dummyjson.com/products/add", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
         body: JSON.stringify(newProduct),
       });
       if (!res.ok) throw new Error("Error al crear producto");
-      const created = await res.json();
+      await res.json();
 
-      // Actualizar Redux local
+      // Actualizamos lista
       dispatch(fetchProducts(token));
       setIsCreateModalOpen(false);
     } catch (err) {
@@ -175,7 +177,6 @@ function Inventario() {
           <FaPlus /> Crear Producto
         </button>
       </div>
-
 
       {loading ? (
         <div className="loading-inventory">
