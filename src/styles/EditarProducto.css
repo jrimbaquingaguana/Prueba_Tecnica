@@ -1,0 +1,91 @@
+.edit-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 25px 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.edit-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.edit-form label {
+  display: block;
+  margin-bottom: 15px;
+  font-weight: 500;
+  color: #444;
+}
+
+.edit-form input,
+.edit-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.edit-form input:focus,
+.edit-form textarea:focus {
+  border-color: #007bff;
+}
+
+.edit-form textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.btn-save,
+.btn-cancel {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-save {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.btn-save:hover {
+  background-color: #0056b3;
+}
+
+.btn-cancel {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.btn-cancel:hover {
+  background-color: #dcdcdc;
+}
+
+.error-text {
+  color: #d9534f;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.loading-text {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 16px;
+  color: #555;
+}

@@ -1,0 +1,211 @@
+.inventory-container {
+  max-width: 1000px;
+  margin: 30px auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.volver-btn {
+  margin-bottom: 20px;
+  background-color: #3498db;
+  color: white;
+  padding: 12px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.volver-btn:hover {
+  background-color: #2980b9;
+}
+
+.product-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-size: 1.8rem;
+}
+
+.product-main {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.main-image-container {
+  position: relative; /* Necesario para las flechas absolutas */
+  text-align: center;
+}
+
+.main-image {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: transform 0.3s ease;
+}
+
+/* Flechas transparentes dentro de la imagen */
+.image-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.7); /* Fondo blanco semitransparente */
+  border: none;
+  padding: px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  color: #000; /* Flechas negras */
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.image-arrow.left {
+  left: 140px;
+}
+
+.image-arrow.right {
+  right: 140px;
+}
+
+/* Solo aparece al pasar el mouse */
+.main-image-container:hover .image-arrow {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0); /* Fondo blanco más sólido al hover */
+}
+
+/* Detalles del producto */
+.product-details {
+  max-width: 400px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.product-details p {
+  margin-bottom: 10px;
+}
+
+/* Miniaturas */
+.thumbnails {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.thumbnail {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: transform 0.2s ease, border 0.2s ease;
+}
+
+.thumbnail:hover {
+  transform: scale(1.05);
+}
+
+.thumbnail.active {
+  border: 2px solid #3498db;
+}
+
+/* Productos relacionados */
+.related-products {
+  margin-top: 40px;
+}
+
+.related-carousel {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scroll-behavior: smooth;
+  justify-content: center;
+}
+
+.related-card {
+  min-width: 150px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.related-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.related-image {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.related-title {
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+/* Loader */
+.loading-inventory {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.loader-gif {
+  width: 80px;
+  margin-top: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-image {
+    width: 220px;
+    height: 220px;
+  }
+
+  .product-details {
+    max-width: 100%;
+  }
+
+  .thumbnail {
+    width: 60px;
+    height: 60px;
+  }
+
+  .volver-btn {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-image {
+    width: 180px;
+    height: 180px;
+  }
+
+  .thumbnail {
+    width: 50px;
+    height: 50px;
+  }
+
+  .volver-btn {
+    padding: 8px 12px; 
+    font-size: 0.85rem;
+  }
+}
