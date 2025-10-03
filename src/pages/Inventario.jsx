@@ -1,9 +1,9 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+// src/Inventario.jsx
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSearch, FaTrash, FaEdit, FaArrowUp, FaArrowDown } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts, removeProduct } from "../redux/productSlice";
 import "../styles/Inventario.css";
+import { confirmDelete } from "../components/Modal_eliminar";
 
 const ActionButton = ({ type, onClick, icon }) => (
   <button className={`btn-${type}`} onClick={onClick} title={type}>
@@ -13,35 +13,60 @@ const ActionButton = ({ type, onClick, icon }) => (
 
 function Inventario() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const containerRef = useRef(null);
 
-  const { items: products, loading, error } = useSelector((state) => state.products);
-  const [page, setPage] = useState(1);
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
+  const [page, setPage] = useState(1);
   const limit = 10;
 
-  // Token desde localStorage
   const storedAuth = JSON.parse(localStorage.getItem("auth"));
   const token = storedAuth?.token;
 
+  // Cargar productos
   useEffect(() => {
-    if (token) {
-      dispatch(fetchProducts(token));
-    } else {
-      dispatch(fetchProducts());
-    }
-  }, [dispatch, token]);
+    const loadProducts = async () => {
+      setLoading(true);
+      try {
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  // Intersection Observer para animaciones al hacer scroll
+        const res = await fetch(`https://dummyjson.com/products?limit=100`, { headers });
+        if (!res.ok) throw new Error("Error al cargar productos");
+        const data = await res.json();
+
+        const products = data.products.map((p) => ({
+          ...p,
+          price: Number(p.price ?? 0),
+          rating: Number(p.rating ?? 0),
+          stock: Number(p.stock ?? 0),
+          title: p.title ?? "",
+          category: p.category ?? "",
+        }));
+
+        setItems(products);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, [token]);
+
+  // Animaciones al hacer scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("visible");
-            observer.unobserve(entry.target); // animar solo una vez
+            observer.unobserve(entry.target);
           }
         });
       },
@@ -54,52 +79,79 @@ function Inventario() {
     }
 
     return () => observer.disconnect();
-  }, [products, page, searchTerm]);
+  }, [items, page, searchTerm]);
 
   const handleView = (id) => navigate(`/producto/${id}`);
   const handleEdit = (id) => navigate(`/editar-producto/${id}`);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("¿Seguro deseas eliminar este producto?")) return;
-    try {
-      const res = await fetch(`https://dummyjson.com/products/${id}`, {
-        method: "DELETE",
-        headers: token ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" },
-      });
-      if (!res.ok) throw new Error("Error al eliminar producto");
-      alert("Producto eliminado correctamente");
-      dispatch(removeProduct(id));
-    } catch (err) {
-      alert(err.message);
-    }
+  // Eliminar producto usando SweetAlert2
+  const handleDeleteClick = async (product) => {
+    await confirmDelete(product, async () => {
+      try {
+        const res = await fetch(`https://dummyjson.com/products/${product.id}`, {
+          method: "DELETE",
+          headers: token
+            ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
+            : { "Content-Type": "application/json" },
+        });
+        if (!res.ok) throw new Error("Error al eliminar producto");
+
+        setItems((prev) => prev.filter((p) => p.id !== product.id));
+      } catch (err) {
+        alert(err.message);
+      }
+    });
   };
 
+  // Ordenamiento
   const requestSort = (key) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") direction = "desc";
     setSortConfig({ key, direction });
+    setPage(0);
+    setTimeout(() => setPage(1), 0);
   };
 
+  // Filtrado y ordenamiento
   const filteredAndSorted = useMemo(() => {
-    let filtered = products.filter(
+    let filtered = items.filter(
       (p) =>
-        p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.category.toLowerCase().includes(searchTerm.toLowerCase())
+        (p.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.category || "").toLowerCase().includes(searchTerm.toLowerCase())
     );
+
     if (sortConfig.key) {
       filtered = [...filtered].sort((a, b) => {
-        const valA = a[sortConfig.key];
-        const valB = b[sortConfig.key];
-        if (typeof valA === "string")
-          return sortConfig.direction === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
-        return sortConfig.direction === "asc" ? valA - valB : valB - valA;
+        let valA = a[sortConfig.key];
+        let valB = b[sortConfig.key];
+
+        if (["price", "rating", "stock"].includes(sortConfig.key)) {
+          valA = Number(valA) || 0;
+          valB = Number(valB) || 0;
+        } else {
+          valA = (valA || "").toString().toLowerCase();
+          valB = (valB || "").toString().toLowerCase();
+        }
+
+        if (typeof valA === "string") {
+          return sortConfig.direction === "asc"
+            ? valA.localeCompare(valB)
+            : valB.localeCompare(valA);
+        } else {
+          return sortConfig.direction === "asc" ? valA - valB : valB - valA;
+        }
       });
     }
-    return filtered;
-  }, [products, searchTerm, sortConfig]);
 
-  const totalPages = Math.ceil(filteredAndSorted.length / limit);
-  const paginatedProducts = filteredAndSorted.slice((page - 1) * limit, page * limit);
+    return filtered;
+  }, [items, searchTerm, sortConfig]);
+
+  const totalPages = Math.max(Math.ceil(filteredAndSorted.length / limit), 1);
+  const currentPage = Math.min(page, totalPages);
+  const paginatedProducts = filteredAndSorted.slice(
+    (currentPage - 1) * limit,
+    currentPage * limit
+  );
 
   const getSortIcon = (key) => {
     if (sortConfig.key !== key) return null;
@@ -112,12 +164,12 @@ function Inventario() {
 
       {loading ? (
         <div className="loading-inventory fade-in-scroll">
-          <img src="https://i.gifer.com/ZZ5H.gif" alt="Cargando" style={{ width: "80px", marginTop: "20px" }} />
+          <img src="https://i.gifer.com/ZZ5H.gif" alt="Cargando" className="loader-gif" />
           <p>Cargando productos...</p>
         </div>
       ) : error ? (
         <p className="error fade-in-scroll">{error}</p>
-      ) : products.length === 0 ? (
+      ) : items.length === 0 ? (
         <p className="no-results fade-in-scroll">No hay productos en el inventario.</p>
       ) : (
         <>
@@ -133,7 +185,7 @@ function Inventario() {
             />
           </div>
 
-          {filteredAndSorted.length === 0 ? (
+          {paginatedProducts.length === 0 ? (
             <p className="no-results fade-in-scroll">No se ha encontrado el producto</p>
           ) : (
             <>
@@ -173,7 +225,7 @@ function Inventario() {
                       <td className="action-buttons">
                         <ActionButton type="details" onClick={() => handleView(prod.id)} icon={<FaSearch />} />
                         <ActionButton type="edit" onClick={() => handleEdit(prod.id)} icon={<FaEdit />} />
-                        <ActionButton type="delete" onClick={() => handleDelete(prod.id)} icon={<FaTrash />} />
+                        <ActionButton type="delete" onClick={() => handleDeleteClick(prod)} icon={<FaTrash />} />
                       </td>
                     </tr>
                   ))}
@@ -181,13 +233,13 @@ function Inventario() {
               </table>
 
               <div className="pagination fade-in-scroll">
-                <button onClick={() => setPage(page - 1)} disabled={page === 1}>
+                <button onClick={() => setPage(currentPage - 1)} disabled={currentPage === 1}>
                   ← Anterior
                 </button>
                 <span>
-                  Página {page} de {totalPages}
+                  Página {currentPage} de {totalPages}
                 </span>
-                <button onClick={() => setPage(page + 1)} disabled={page === totalPages}>
+                <button onClick={() => setPage(currentPage + 1)} disabled={currentPage === totalPages}>
                   Siguiente →
                 </button>
               </div>

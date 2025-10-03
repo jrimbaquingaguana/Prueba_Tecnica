@@ -1,86 +1,103 @@
-/* Header.css */
+/* Header */
 .header {
+  max-width: 1000px; 
+  width: 95%; 
+  margin: 0 auto; 
+  background-color: #1f3a93; 
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 30px;
-  background: linear-gradient(90deg, #4e73df, #1cc88a);
-  color: #fff;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  flex-wrap: wrap; /* Permite que los elementos bajen de línea en pantallas pequeñas */
+  padding: 10px 20px; /* más compacto verticalmente */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
+/* Título */
 .header-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  letter-spacing: 1px;
+  font-size: 1.5rem;
+  color: #fff;
+  margin: 0;
 }
 
+/* Información del usuario */
 .user-info {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-weight: 500;
-  font-size: 1rem;
-  margin-top: 10px; /* Separa del título si baja de línea */
+  gap: 12px;
+  max-width: 400px; /* limitar ancho para que el botón no crezca demasiado */
+  flex-wrap: wrap; /* se ajusta en pantallas pequeñas */
 }
 
+/* Nombre de usuario */
 .username {
   color: #fff;
+  font-weight: 500;
+  white-space: nowrap; /* evita que se rompa el texto */
 }
 
+/* Foto de perfil */
 .profile-pic {
-  width: 45px;
-  height: 45px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
+  object-fit: cover;
   border: 2px solid #fff;
-  cursor: pointer;
-  transition: transform 0.2s;
 }
 
+/* Botón de cerrar sesión */
 .logout-button {
-  margin-left: 15px;
-  padding: 5px 12px;
-  background-color: #e74c3c;
-  border: none;
-  border-radius: 5px;
+  background-color: #0c2461; /* azul más oscuro */
   color: #fff;
-  font-weight: bold;
+  border: none;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  flex-shrink: 0; /* evita que el botón se encoja */
 }
 
 .logout-button:hover {
-  background-color: #c0392b;
+  background-color: #081f4c; /* azul más intenso al hover */
+  transform: scale(1.05);
 }
 
-/* Media Queries para pantallas más pequeñas */
-@media (max-width: 600px) {
+/* Responsive */
+@media (max-width: 768px) {
   .header {
     flex-direction: column;
-    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 15px;
   }
 
   .header-title {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+  }
+
+  .logout-button {
+    padding: 6px 12px;
+    font-size: 0.9rem;
   }
 
   .user-info {
-    margin-top: 10px;
-    flex-wrap: wrap;
-    gap: 5px;
+    max-width: 100%;
+    justify-content: center;
   }
+}
 
+@media (max-width: 480px) {
   .profile-pic {
     width: 35px;
     height: 35px;
   }
 
+  .header-title {
+    font-size: 1.2rem;
+  }
+
   .logout-button {
-    margin-left: 0;
-    padding: 4px 10px;
-    font-size: 0.9rem;
+    padding: 5px 10px;
+    font-size: 0.85rem;
   }
 }

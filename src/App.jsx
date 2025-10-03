@@ -10,7 +10,7 @@ import {
 
 import "./styles/App.css";
 import Inventario from "../src/pages/Inventario.jsx";
-import Header from "../src/pages/Header.jsx"; 
+import Header from "../src/components/Header.jsx"; 
 import ProductoDetalle from "../src/pages/ProductoDetalle.jsx";
 import Login from "../src/pages/Login.jsx";
 import EditarProducto from "../src/pages/EditarProducto.jsx";
