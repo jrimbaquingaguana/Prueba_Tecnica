@@ -65,13 +65,17 @@ vite.config.js   # Configuración de Vite
 
 ### 1. Clonar el repositorio  
 
-git clone [<url-del-repositorio>](https://github.com/jrimbaquingaguana/Prueba_Tecnica.git)
-
+git clone 
+```text
+[<url-del-repositorio>](https://github.com/jrimbaquingaguana/Prueba_Tecnica.git)
+```
 
 ### 2.- Instalar dependencias
-
+```text
 npm install
+```
 
 ### 3.- Ejecutar en modo desarrollo
+```text
 npm run dev
-
+```
