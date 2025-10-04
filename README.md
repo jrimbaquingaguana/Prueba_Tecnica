@@ -103,4 +103,3 @@ Se implementaron pruebas unitarias y de integración para asegurar el correcto f
 ```text
 npm run test
 ```
-```
