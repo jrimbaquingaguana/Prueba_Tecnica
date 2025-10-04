@@ -89,22 +89,8 @@ npm run dev
 
 Se implementaron pruebas unitarias y de integración para asegurar el correcto funcionamiento del sistema:
 
-Redux (productSlice.js)
-
-Test de reducers (addLocalProduct, removeProduct, updateLocalProduct, setSearch, setSort, setPage, clearError)
-
-Test de thunks (fetchProducts, fetchProduct, createProduct, updateProduct) usando mock de fetch y mock de dispatch
-
-Verificación de que los productos se guardan correctamente en localStorage
-
-Componentes React (CrearProducto)
-
-Apertura y cierre del modal
-
-Validación de campos requeridos (ej: categoría obligatoria)
-
-Simulación de creación de producto y verificación de llamadas a dispatch y Swal.fire
-
+1. **Redux (productSlice.js)**
+2. **Componentes React (CrearProducto)**
 ### 1.- Ejecutar los test
 ```text
 npm run test
