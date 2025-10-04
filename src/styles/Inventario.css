@@ -292,15 +292,16 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 /* --- Responsive: Tablets (768px o menos) --- */
+/* --- Responsive: Tablets (768px o menos) --- */
 @media (max-width: 768px) {
 
   .inventory-container {
-    margin: 20px 15px;
-    padding: 20px;
+    margin: 20px 10px;
+    padding: 18px;
   }
 
   .inventory-container h2 {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
   }
 
   .search-create-container {
@@ -330,7 +331,7 @@ body {
   }
 
   .related-products {
-    margin-top: 30px;
+    margin-top: 25px;
   }
 
   .related-card {
@@ -347,12 +348,13 @@ body {
 @media (max-width: 480px) {
 
   .inventory-container {
-    margin: 15px 10px;
-    padding: 15px;
+    margin: 12px 5px;
+    padding: 12px;
+    border-radius: 10px;
   }
 
   .inventory-container h2 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
   }
 
   .search-create-container {
@@ -362,54 +364,70 @@ body {
   }
 
   .search-bar input {
-    padding: 8px 12px 8px 35px;
-    font-size: 0.85rem;
+    padding: 8px 12px 8px 32px;
+    font-size: 0.8rem;
   }
 
   .btn-create {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     padding: 8px 0;
   }
 
+  /* Tabla scrolleable horizontal */
   .inventory-table {
     display: block;
     overflow-x: auto;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    border-radius: 8px;
   }
 
   .inventory-table th,
   .inventory-table td {
-    padding: 6px 8px;
+    padding: 6px;
+    white-space: nowrap; /* evita que se rompan las filas */
   }
 
   .product-image {
-    width: 50px;
-    height: 35px;
+    width: 45px;
+    height: 32px;
   }
 
   .action-buttons button {
+    padding: 5px 8px;
+    font-size: 0.7rem;
+  }
+
+  /* Paginación más compacta */
+  .pagination {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .pagination button {
     padding: 6px 10px;
     font-size: 0.75rem;
   }
 
-  .pagination {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
+  /* Productos relacionados: carrusel horizontal */
   .related-products {
     display: flex;
     overflow-x: auto;
     gap: 10px;
-    padding-bottom: 10px;
+    padding: 5px 0 10px;
+    -webkit-overflow-scrolling: touch; /* scroll fluido en iOS */
   }
 
   .related-card {
-    min-width: 100px;
+    min-width: 110px;
     flex: 0 0 auto;
   }
 
+  .related-image {
+    height: 80px;
+    object-fit: cover;
+  }
+
   .related-title {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 }
