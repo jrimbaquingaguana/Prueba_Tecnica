@@ -1,12 +1,12 @@
 // store.js
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
-import productReducer from "./productSlice"; // asegúrate que existe
+import productReducer from "./productSlice"; 
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
-    products: productReducer, // este nombre será la "key" en el estado global
+    products: productReducer, 
   },
 });
 

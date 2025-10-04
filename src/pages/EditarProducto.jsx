@@ -17,7 +17,6 @@ function EditarProducto({ token }) {
     (state) => state.products
   );
 
-  // Cargar producto: primero buscar en localStorage y luego en API si no existe
   useEffect(() => {
     const localProduct = items.find((p) => String(p.id) === id);
     if (localProduct) {
@@ -27,11 +26,9 @@ function EditarProducto({ token }) {
     }
   }, [id, token, dispatch, items]);
 
-  // Manejo de cambios en inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Mandamos también el id para que el slice actualice items y localStorage
     dispatch(updateLocalProduct({ id: product.id, [name]: value }));
   };
 

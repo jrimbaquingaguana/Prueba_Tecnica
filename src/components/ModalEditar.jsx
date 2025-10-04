@@ -1,7 +1,6 @@
-// src/components/ModalEditar.jsx
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import "../styles/ModalEditar.css"; // agrega estilos como quieras
+import "../styles/ModalEditar.css";
 
 const ModalEditar = ({ isOpen, product, onClose, onUpdate }) => {
   const [formData, setFormData] = useState({

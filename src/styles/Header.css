@@ -9,7 +9,6 @@
   box-sizing: border-box;
 }
 
-/* Contenedor interno del header: limita el ancho */
 .header-container {
   max-width: 1000px;
   width: 95%;
@@ -19,31 +18,27 @@
   padding: 0 20px;
 }
 
-/* Título */
 .header-title {
   font-size: 1.75rem;
   color: #fff;
   margin: 0 0 0 10px; 
 }
 
-/* Información del usuario */
 .user-info {
   display: flex;
   align-items: center;
   gap: 15px;
   max-width: 400px;
   flex-wrap: wrap;
-  margin-left: 650px; /* esto se mantiene en escritorio */
+  margin-left: 650px; 
 }
 
-/* Nombre de usuario */
 .username {
   color: #fff;
   font-weight: 500;
   white-space: nowrap;
 }
 
-/* Foto de perfil */
 .profile-pic {
   width: 40px;
   height: 40px;
@@ -52,7 +47,6 @@
   border: 2px solid #fff;
 }
 
-/* Botón de cerrar sesión */
 .logout-button {
   background-color: #a70707;
   color: #fff;
@@ -71,7 +65,6 @@
   transform: scale(1.05);
 }
 
-/* Responsive: Tablets */
 @media (max-width: 768px) {
   .header-container {
     flex-direction: column;
@@ -92,11 +85,10 @@
   .user-info {
     max-width: 100%;
     justify-content: center;
-    margin-left: 0; /* anula el empuje a la derecha */
+    margin-left: 0; 
   }
 }
 
-/* Responsive: Móviles pequeños */
 @media (max-width: 480px) {
   .profile-pic {
     width: 35px;
@@ -116,6 +108,6 @@
   .user-info {
     gap: 6px;
     justify-content: center;
-    margin-left: 0; /* igual en móviles, nada de empujar */
+    margin-left: 0; 
   }
 }

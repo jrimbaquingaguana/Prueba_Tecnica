@@ -3,7 +3,7 @@ body {
   font-family: 'Roboto', sans-serif;
   font-size: 16px;
   color: #2c3e50;
-  background-color: #e8f0f8; /* azul muy claro de fondo */
+  background-color: #e8f0f8; 
   margin: 0;
   padding: 0;
   line-height: 1.6;
@@ -13,23 +13,21 @@ body {
   max-width: 1200px;
   margin: 30px auto;
   color: #2c3e50;
-  background-color: #ffffff; /* blanco puro para contraste */
+  background-color: #ffffff; 
   padding: 25px 30px;
-  border-radius: 15px; /* bordes más suaves */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); /* sombra sutil */
+  border-radius: 15px; 
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); 
   animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Título */
 .inventory-container h2 {
   text-align: center;
   margin-bottom: 25px;
-  color: #1f3a93; /* azul principal */
+  color: #1f3a93; 
   font-size: 2rem;
   letter-spacing: 1px;
 }
 
-/* Contenedor búsqueda + botón crear */
 .search-create-container {
   display: flex;
   justify-content: space-between;
@@ -39,7 +37,6 @@ body {
   flex-wrap: wrap;
 }
 
-/* Barra de búsqueda con ícono */
 .search-bar {
   position: relative;
   flex: 1;
@@ -72,13 +69,12 @@ body {
   pointer-events: none;
 }
 
-/* Botón Crear Producto */
 .btn-create {
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 10px 20px;
-  background-color: #206ff0; /* verde turquesa */
+  background-color: #206ff0; 
   color: #fff;
   border: none;
   border-radius: 25px;
@@ -88,7 +84,7 @@ body {
 }
 
 .btn-create:hover {
-  background-color: #4172ff; /* verde más oscuro */
+  background-color: #4172ff; 
   transform: translateY(-2px);
   box-shadow: #4172ff ;
 }
@@ -111,23 +107,21 @@ body {
 }
 
 .inventory-table th {
-  background-color: #1f3a93; /* azul oscuro */
+  background-color: #1f3a93; 
   color: white;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-/* Animación de aparición de filas */
 .inventory-table tbody tr {
   background-color: #fefefe;
   transition: all 0.3s ease;
-  opacity: 0;                 /* empieza invisible */
-  transform: translateY(20px); /* desplazada hacia abajo */
-  animation: slideUp 0.5s forwards; /* animación general */
+  opacity: 0;                 
+  transform: translateY(20px); 
+  animation: slideUp 0.5s forwards; 
 }
 
-/* Animación secuencial por fila */
 .inventory-table tbody tr:nth-child(1) { animation-delay: 0s; }
 .inventory-table tbody tr:nth-child(2) { animation-delay: 0.1s; }
 .inventory-table tbody tr:nth-child(3) { animation-delay: 0.2s; }
@@ -138,9 +132,7 @@ body {
 .inventory-table tbody tr:nth-child(8) { animation-delay: 0.7s; }
 .inventory-table tbody tr:nth-child(9) { animation-delay: 0.8s; }
 .inventory-table tbody tr:nth-child(10) { animation-delay: 0.9s; }
-/* Puedes agregar más según la cantidad de filas esperadas */
 
-/* Keyframes para slide-up */
 @keyframes slideUp {
   0% {
     opacity: 0;
@@ -154,13 +146,12 @@ body {
 
 
 .inventory-table tbody tr:hover {
-  background-color: #f0f8ff; /* azul muy claro al hover */
+  background-color: #f0f8ff; 
   transform: translateY(-2px);
   box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  border-left: 4px solid #1f3a93; /* barra lateral azul */
+  border-left: 4px solid #1f3a93; 
 }
 
-/* Imagen del producto */
 .product-image {
   width: 80px;
   height: 60px;
@@ -168,7 +159,6 @@ body {
   border-radius: 8px;
 }
 
-/* Botones de acción */
 .action-buttons button {
   margin: 0 3px;
   padding: 10px 14px;
@@ -191,7 +181,6 @@ body {
 .btn-edit:hover { background-color: #d68910; transform: scale(1.05); }
 .btn-delete:hover { background-color: #c0392b; transform: scale(1.05); }
 
-/* Paginación */
 .pagination {
   display: flex;
   justify-content: center;
@@ -221,7 +210,6 @@ body {
   opacity: 0.5;
 }
 
-/* Loader */
 .loading-inventory {
   display: flex;
   flex-direction: column;
@@ -238,7 +226,6 @@ body {
   margin-top: 20px;
 }
 
-/* Mensaje de no resultados */
 .no-results {
   text-align: center;
   margin-top: 20px;
@@ -247,7 +234,6 @@ body {
   font-size: 1.1rem;
 }
 
-/* Bordes y sombras en productos relacionados */
 .related-products {
   margin-top: 40px;
   animation: fadeIn 0.5s ease-in-out;
@@ -281,7 +267,6 @@ body {
   color: #2c3e50;
 }
 
-/* Animaciones */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -291,8 +276,7 @@ body {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
-/* --- Responsive: Tablets (768px o menos) --- */
-/* --- Responsive: Tablets (768px o menos) --- */
+
 @media (max-width: 768px) {
 
   .inventory-container {
@@ -344,7 +328,6 @@ body {
   }
 }
 
-/* --- Responsive: Móviles (480px o menos) --- */
 @media (max-width: 480px) {
 
   .inventory-container {
@@ -373,7 +356,6 @@ body {
     padding: 8px 0;
   }
 
-  /* Tabla scrolleable horizontal */
   .inventory-table {
     display: block;
     overflow-x: auto;
@@ -384,7 +366,7 @@ body {
   .inventory-table th,
   .inventory-table td {
     padding: 6px;
-    white-space: nowrap; /* evita que se rompan las filas */
+    white-space: nowrap; 
   }
 
   .product-image {
@@ -397,7 +379,6 @@ body {
     font-size: 0.7rem;
   }
 
-  /* Paginación más compacta */
   .pagination {
     flex-wrap: wrap;
     gap: 5px;
@@ -408,13 +389,12 @@ body {
     font-size: 0.75rem;
   }
 
-  /* Productos relacionados: carrusel horizontal */
   .related-products {
     display: flex;
     overflow-x: auto;
     gap: 10px;
     padding: 5px 0 10px;
-    -webkit-overflow-scrolling: touch; /* scroll fluido en iOS */
+    -webkit-overflow-scrolling: touch; 
   }
 
   .related-card {

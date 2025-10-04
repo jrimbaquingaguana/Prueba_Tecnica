@@ -1,7 +1,6 @@
-// src/components/ModalEliminar.jsx
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import "../styles/ModalEliminar.css"; // Solo importa tu CSS
+import "../styles/ModalEliminar.css";
 
 const MySwal = withReactContent(Swal);
 
@@ -16,10 +15,10 @@ export const confirmDelete = async (product, onConfirm) => {
     reverseButtons: true,
     focusCancel: true,
     customClass: {
-      popup: "modal-content",       // Estilo del modal desde tu CSS
+      popup: "modal-content",
       confirmButton: "btn-confirm",
       cancelButton: "btn-cancel",
-      backdrop: "modal-overlay",    // Fondo transparente con blur
+      backdrop: "modal-overlay",   
     },
     showClass: {
       popup: "swal2-show",

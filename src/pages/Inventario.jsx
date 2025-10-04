@@ -1,16 +1,13 @@
-// src/pages/Inventario.jsx
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom"; 
 import { FaSearch, FaTrash, FaEdit, FaArrowUp, FaArrowDown, FaPlus } from "react-icons/fa";
 import "../styles/Inventario.css";
 import { useDispatch, useSelector } from "react-redux";
 
-// Componentes
 import ModalEditar from "../components/ModalEditar";
 import CrearProducto from "../components/CrearProducto";
 import { confirmDelete } from "../components/ModalEliminar";
 
-// Redux
 import { 
   fetchProducts,
   removeProduct,
@@ -31,33 +28,26 @@ function Inventario() {
   const containerRef = useRef(null);
   const dispatch = useDispatch();
 
-  // Redux state
   const { items, loading, error, searchTerm, sortConfig, page, limit } = useSelector(
     (state) => state.products
   );
   
-  // Token desde localStorage
   const token = JSON.parse(localStorage.getItem("auth"))?.token;
 
-  // Modal edición
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null);
 
-  // Modal crear
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [creating, setCreating] = useState(false);
 
-  // Cargar productos al inicio
   useEffect(() => {
     if (token) {
       dispatch(fetchProducts(token));
     }
   }, [dispatch, token]);
 
-  // Navegar a detalle de producto
   const handleView = (id) => navigate(`/producto/${id}`);
 
-  // Editar producto
   const handleEditClick = (product) => {
     setProductToEdit(product);
     setIsEditModalOpen(true);
@@ -67,7 +57,6 @@ function Inventario() {
     dispatch(updateLocalProduct(updatedProduct));
   };
 
-  // Eliminar producto
   const handleDeleteClick = async (product) => {
     await confirmDelete(product, async () => {
       try {
@@ -80,7 +69,6 @@ function Inventario() {
 
         if (!res.ok) throw new Error("No se pudo eliminar el producto");
 
-        // Actualizamos Redux
         dispatch(removeProduct(product.id));
       } catch (err) {
         throw err;
@@ -88,7 +76,6 @@ function Inventario() {
     });
   };
 
-  // Crear producto
   const handleCreateProduct = async (newProduct) => {
     try {
       setCreating(true);
@@ -103,7 +90,6 @@ function Inventario() {
       if (!res.ok) throw new Error("Error al crear producto");
       await res.json();
 
-      // Actualizamos lista
       dispatch(fetchProducts(token));
       setIsCreateModalOpen(false);
     } catch (err) {
@@ -113,7 +99,6 @@ function Inventario() {
     }
   };
 
-  // Filtrado y ordenamiento
   const filteredAndSorted = useMemo(() => {
     let filtered = items.filter(
       (p) =>

@@ -8,7 +8,6 @@ function ProductoDetalle() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Obtener token desde localStorage (accessToken)
   const token = JSON.parse(localStorage.getItem("auth"))?.token || "";
 
   const [product, setProduct] = useState(null);
@@ -24,16 +23,14 @@ function ProductoDetalle() {
       try {
         const headers = { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` // Token incluido
+          "Authorization": `Bearer ${token}` 
         };
 
-        // Obtener producto
         const res = await fetch(`https://dummyjson.com/products/${id}`, { headers });
         if (!res.ok) throw new Error("Producto no encontrado.");
         const data = await res.json();
         setProduct(data);
 
-        // Productos relacionados por categoría
         const relatedRes = await fetch(
           `https://dummyjson.com/products/category/${encodeURIComponent(data.category)}?limit=6`,
           { headers }
@@ -47,7 +44,6 @@ function ProductoDetalle() {
         setError(err.message);
         setProduct(null);
 
-        // Sugerencias genéricas si falla
         try {
           const resAll = await fetch(`https://dummyjson.com/products?limit=6`, { 
             headers: { "Content-Type": "application/json" } 
@@ -65,8 +61,6 @@ function ProductoDetalle() {
     fetchProductData();
   }, [id, token]);
 
-  // Ya no mostramos mensaje de “no token”, asumimos que el token existe
-  // Si no existe, la petición fallará por 401 y se mostrarán sugerencias
 
   if (loading) {
     return (

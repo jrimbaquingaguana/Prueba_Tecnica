@@ -15,7 +15,6 @@ const Login = () => {
     dispatch(loginUser({ username, password }));
   };
 
-  // Recuperamos directamente de localStorage sin estado
   const storedUser = JSON.parse(localStorage.getItem("auth"))?.user;
 
   return (

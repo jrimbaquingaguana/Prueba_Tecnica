@@ -1,5 +1,3 @@
-/* Inventory.css */
-
 .inventory-container {
   max-width: 1000px;
   margin: 30px auto;
@@ -9,7 +7,6 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
 
-/* Botón volver */
 .volver-btn {
   margin-bottom: 20px;
   background-color: #3498db;
@@ -25,7 +22,6 @@
   background-color: #2980b9;
 }
 
-/* Título producto */
 .product-title {
   text-align: center;
   margin-bottom: 20px;
@@ -33,7 +29,6 @@
   font-size: 2rem;
 }
 
-/* Layout principal */
 .product-main {
   display: flex;
   gap: 15px;
@@ -42,7 +37,6 @@
   align-items: flex-start;
 }
 
-/* Imagen principal */
 .main-image-container {
   position: relative;
   display: flex;
@@ -57,7 +51,6 @@
   transition: transform 0.05s ease;
 }
 
-/* Flechas */
 .image-arrow {
   position: absolute;
   top: 50%;
@@ -81,7 +74,6 @@
   background-color: rgba(255, 255, 255, 0);
 }
 
-/* Overlay índice */
 .carousel-index-overlay {
   position: absolute;
   bottom: 8px;
@@ -94,7 +86,6 @@
   font-weight: bold;
 }
 
-/* Detalles producto */
 .product-details {
   max-width: 400px;
   font-size: 1.1rem;
@@ -108,7 +99,6 @@
   line-height: 1.3;
 }
 
-/* Miniaturas */
 .thumbnails {
   display: flex;
   justify-content: center;
@@ -131,14 +121,12 @@
 .thumbnail:hover { transform: scale(1.05); }
 .thumbnail.active { border: 2px solid #3498db; }
 
-/* Animación miniaturas */
 .thumbnails .thumbnail:nth-child(1) { animation-delay: 0.1s; }
 .thumbnails .thumbnail:nth-child(2) { animation-delay: 0.2s; }
 .thumbnails .thumbnail:nth-child(3) { animation-delay: 0.3s; }
 .thumbnails .thumbnail:nth-child(4) { animation-delay: 0.4s; }
 .thumbnails .thumbnail:nth-child(5) { animation-delay: 0.5s; }
 
-/* Productos relacionados */
 .related-products { margin-top: 30px; }
 .related-carousel {
   display: flex;
@@ -180,7 +168,6 @@
   margin-top: 5px;
 }
 
-/* Loader */
 .loading-inventory {
   display: flex;
   flex-direction: column;
@@ -192,17 +179,11 @@
   margin-top: 20px;
 }
 
-/* Animaciones */
 @keyframes fadeSlideUp {
   0% { opacity: 0; transform: translateY(15px); }
   100% { opacity: 1; transform: translateY(0); }
 }
 
-/* -------------------
-   Responsividad
-------------------- */
-
-/* Tablets */
 @media (max-width: 768px) {
   .main-image { width: 220px; height: 220px; }
   .product-details { max-width: 100%; font-size: 1rem; }
@@ -210,13 +191,11 @@
   .volver-btn { padding: 10px 16px; font-size: 0.9rem; }
   .related-card { min-width: 130px; }
 
-  /* Otros productos en tablets */
   .other-grid { 
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
   }
 }
 
-/* Celulares */
 @media (max-width: 480px) {
   .product-main { flex-direction: column; align-items: center; }
   .main-image { width: 180px; height: 180px; }
@@ -226,7 +205,6 @@
   .related-title { font-size: 0.9rem; }
   .related-card { min-width: 120px; }
 
-  /* Otros productos en celulares */
   .other-grid { 
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
   }

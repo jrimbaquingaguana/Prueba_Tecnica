@@ -1,9 +1,6 @@
 // src/redux/productSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// -------------------------
-// Helpers para LocalStorage
-// -------------------------
 const STORAGE_KEY = "products";
 const DELETED_KEY = "deletedProducts";
 
@@ -25,9 +22,6 @@ const loadDeletedIds = () => {
   return data ? JSON.parse(data) : [];
 };
 
-// -------------------------
-// Thunks asíncronos usando token del state
-// -------------------------
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async (_, { rejectWithValue, getState }) => {
@@ -113,9 +107,6 @@ export const createProduct = createAsyncThunk(
   }
 );
 
-// -------------------------
-// Slice principal
-// -------------------------
 const productSlice = createSlice({
   name: "products",
   initialState: {
@@ -152,11 +143,9 @@ const productSlice = createSlice({
     updateLocalProduct: (state, action) => {
       state.product = { ...state.product, ...action.payload };
 
-      // Actualiza el item en items si existe
       const idx = state.items.findIndex((p) => p.id === state.product.id);
       if (idx !== -1) state.items[idx] = { ...state.items[idx], ...state.product };
 
-      // Guardar siempre en localStorage
       saveToLocalStorage(state.items);
     },
 
@@ -174,7 +163,6 @@ const productSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // fetchProducts
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -193,7 +181,6 @@ const productSlice = createSlice({
         state.error = action.payload;
       })
 
-      // fetchProduct
       .addCase(fetchProduct.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -207,7 +194,6 @@ const productSlice = createSlice({
         state.error = action.payload;
       })
 
-      // updateProduct
       .addCase(updateProduct.pending, (state) => {
         state.saving = true;
         state.error = null;
@@ -226,7 +212,6 @@ const productSlice = createSlice({
         state.error = action.payload;
       })
 
-      // createProduct
       .addCase(createProduct.pending, (state) => {
         state.saving = true;
         state.error = null;
@@ -247,9 +232,6 @@ const productSlice = createSlice({
   },
 });
 
-// -------------------------
-// Exportaciones
-// -------------------------
 export const {
   addLocalProduct,
   clearError,

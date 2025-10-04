@@ -1,9 +1,6 @@
 // src/redux/authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// -------------------------
-// Login con DummyJSON
-// -------------------------
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ username, password }, { rejectWithValue }) => {
@@ -18,13 +15,11 @@ export const loginUser = createAsyncThunk(
 
       const data = await res.json();
 
-      // Verificamos que el accessToken exista
       if (!data.accessToken) throw new Error("No se recibió accessToken del servidor");
 
-      // Guardar token y usuario en localStorage
       const authData = {
-        token: data.accessToken,        // aquí usamos accessToken
-        refreshToken: data.refreshToken, // opcional
+        token: data.accessToken,        
+        refreshToken: data.refreshToken, 
         user: {
           id: data.id,
           username: data.username,
@@ -44,9 +39,6 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// -------------------------
-// Cargar auth desde localStorage
-// -------------------------
 export const loadStoredAuth = createAsyncThunk(
   "auth/loadStoredAuth",
   async () => {
@@ -89,7 +81,6 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.refreshToken = action.payload.refreshToken;
         state.showWelcome = true;
-        // Guardamos nuevamente en localStorage
         localStorage.setItem("auth", JSON.stringify(action.payload));
       })
       .addCase(loginUser.rejected, (state, action) => {

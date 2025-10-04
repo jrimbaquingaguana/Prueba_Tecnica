@@ -7,7 +7,6 @@ import { addLocalProduct, createProduct } from "../redux/productSlice";
 const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
   const dispatch = useDispatch();
 
-  // Redux: categorías disponibles
   const items = useSelector((state) => state.products.items);
   const categoriesAvailable = Array.from(
     new Set(items.map((p) => p.category).filter(Boolean))
@@ -26,12 +25,12 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
 
   if (!isOpen) return null;
 
-  // Cambios generales en inputs
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     if ((name === "price" || name === "stock") && Number(value) <= 0) return;
 
-    // Si el usuario selecciona categoría existente, limpiar nueva categoría
+    
     if (name === "category") {
       setNewCategory("");
     }
@@ -41,7 +40,7 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
 
   const handleNewCategoryChange = (e) => {
     setNewCategory(e.target.value);
-    setFormData({ ...formData, category: "" }); // limpia select si escribe nueva
+    setFormData({ ...formData, category: "" }); 
   };
 
   const handleImageChange = (e) => {
@@ -79,7 +78,6 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
       return;
     }
 
-    // Convertir imágenes a base64
     const imageUrls = await Promise.all(
       formData.images.map(
         (file) =>
@@ -97,7 +95,6 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
       images: imageUrls,
     };
 
-    // Guardar localmente
     dispatch(addLocalProduct(productToSend));
 
     try {
@@ -122,7 +119,6 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
       if (onCreate) onCreate(productToSend);
     }
 
-    // Limpiar formulario
     setFormData({
       title: "",
       price: 1,
@@ -176,7 +172,7 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
             />
           </label>
 
-          {/* Select de categoría existente */}
+          {}
           <label>
             Categoría existente:
             <select
@@ -194,7 +190,7 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
             </select>
           </label>
 
-          {/* Input de nueva categoría */}
+          {}
           {formData.category === "" && (
             <label>
               O nueva categoría:

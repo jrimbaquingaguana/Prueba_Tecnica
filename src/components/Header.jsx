@@ -1,8 +1,7 @@
-
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
-import { FaSignOutAlt } from "react-icons/fa"; // ícono de logout
+import { FaSignOutAlt } from "react-icons/fa"; 
 import "../styles/Header.css";
 
 function Header() {
@@ -13,7 +12,7 @@ function Header() {
     dispatch(logout());
   };
 
-  if (!user) return null; // Si no hay usuario, no mostramos nada
+  if (!user) return null; 
 
   return (
     <header className="header">
