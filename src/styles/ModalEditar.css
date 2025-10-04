@@ -7,8 +7,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.3); /* Más transparente que antes */
-  backdrop-filter: blur(3px); /* Desenfoque suave */
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(3px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -122,3 +122,55 @@
   resize: vertical;
 }
 
+/* -------------------
+   Responsividad
+------------------- */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90%;
+    padding: 1.5rem;
+  }
+
+  .modal-content h3 {
+    font-size: 1.3rem;
+  }
+
+  .btn-cancel,
+  .btn-confirm {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Celulares */
+@media (max-width: 480px) {
+  .modal-content {
+    width: 95%;
+    padding: 1rem;
+  }
+
+  .modal-content h3 {
+    font-size: 1.1rem;
+  }
+
+  .modal-edit-form input,
+  .modal-edit-form textarea {
+    font-size: 0.9rem;
+    padding: 0.4rem;
+  }
+
+  .btn-cancel,
+  .btn-confirm {
+    width: 100%;
+    text-align: center;
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+}

@@ -1,3 +1,5 @@
+/* Inventory.css */
+
 .inventory-container {
   max-width: 1000px;
   margin: 30px auto;
@@ -7,6 +9,7 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
 
+/* Botón volver */
 .volver-btn {
   margin-bottom: 20px;
   background-color: #3498db;
@@ -18,11 +21,11 @@
   cursor: pointer;
   transition: all 0.15s ease;
 }
-
 .volver-btn:hover {
   background-color: #2980b9;
 }
 
+/* Título producto */
 .product-title {
   text-align: center;
   margin-bottom: 20px;
@@ -30,6 +33,7 @@
   font-size: 2rem;
 }
 
+/* Layout principal */
 .product-main {
   display: flex;
   gap: 15px;
@@ -38,13 +42,13 @@
   align-items: flex-start;
 }
 
+/* Imagen principal */
 .main-image-container {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
 .main-image {
   width: 300px;
   height: 300px;
@@ -53,7 +57,7 @@
   transition: transform 0.05s ease;
 }
 
-/* Flechas dentro de la imagen */
+/* Flechas */
 .image-arrow {
   position: absolute;
   top: 50%;
@@ -69,20 +73,15 @@
   transition: all 0.3s ease;
   z-index: 10;
 }
-
-.image-arrow.left {
-  left: -20px;
-}
-
-.image-arrow.right {
-  right: -10px;
-}
+.image-arrow.left { left: -20px; }
+.image-arrow.right { right: -10px; }
 
 .main-image-container:hover .image-arrow {
   opacity: 1;
   background-color: rgba(255, 255, 255, 0);
 }
 
+/* Overlay índice */
 .carousel-index-overlay {
   position: absolute;
   bottom: 8px;
@@ -95,6 +94,7 @@
   font-weight: bold;
 }
 
+/* Detalles producto */
 .product-details {
   max-width: 400px;
   font-size: 1.1rem;
@@ -103,7 +103,6 @@
   flex-direction: column;
   gap: 6px;
 }
-
 .product-details p {
   margin: 0;
   line-height: 1.3;
@@ -117,7 +116,6 @@
   margin-top: 15px;
   flex-wrap: wrap;
 }
-
 .thumbnail {
   width: 80px;
   height: 80px;
@@ -130,16 +128,10 @@
   transform: translateY(15px);
   animation: fadeSlideUp 0.4s forwards;
 }
+.thumbnail:hover { transform: scale(1.05); }
+.thumbnail.active { border: 2px solid #3498db; }
 
-.thumbnail:hover {
-  transform: scale(1.05);
-}
-
-.thumbnail.active {
-  border: 2px solid #3498db;
-}
-
-/* Animación secuencial de miniaturas */
+/* Animación miniaturas */
 .thumbnails .thumbnail:nth-child(1) { animation-delay: 0.1s; }
 .thumbnails .thumbnail:nth-child(2) { animation-delay: 0.2s; }
 .thumbnails .thumbnail:nth-child(3) { animation-delay: 0.3s; }
@@ -147,10 +139,7 @@
 .thumbnails .thumbnail:nth-child(5) { animation-delay: 0.5s; }
 
 /* Productos relacionados */
-.related-products {
-  margin-top: 30px;
-}
-
+.related-products { margin-top: 30px; }
 .related-carousel {
   display: flex;
   gap: 15px;
@@ -159,7 +148,6 @@
   scroll-behavior: smooth;
   justify-content: center;
 }
-
 .related-card {
   min-width: 150px;
   cursor: pointer;
@@ -169,13 +157,10 @@
   transform: translateY(15px);
   animation: fadeSlideUp 0.4s forwards;
 }
-
 .related-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
-
-/* Animación secuencial productos relacionados */
 .related-carousel .related-card:nth-child(1) { animation-delay: 0.1s; }
 .related-carousel .related-card:nth-child(2) { animation-delay: 0.25s; }
 .related-carousel .related-card:nth-child(3) { animation-delay: 0.35s; }
@@ -189,7 +174,6 @@
   display: block;
   margin: 0 auto;
 }
-
 .related-title {
   text-align: center;
   font-size: 1rem;
@@ -203,36 +187,37 @@
   align-items: center;
   margin-top: 50px;
 }
-
 .loader-gif {
   width: 80px;
   margin-top: 20px;
 }
 
-/* Keyframes animación */
+/* Animaciones */
 @keyframes fadeSlideUp {
-  0% {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive */
+/* -------------------
+   Responsividad
+------------------- */
+
+/* Tablets */
 @media (max-width: 768px) {
   .main-image { width: 220px; height: 220px; }
   .product-details { max-width: 100%; font-size: 1rem; }
   .thumbnail { width: 60px; height: 60px; }
   .volver-btn { padding: 10px 16px; font-size: 0.9rem; }
+  .related-card { min-width: 130px; }
 }
 
+/* Celulares */
 @media (max-width: 480px) {
+  .product-main { flex-direction: column; align-items: center; }
   .main-image { width: 180px; height: 180px; }
   .thumbnail { width: 50px; height: 50px; }
   .volver-btn { padding: 8px 12px; font-size: 0.85rem; }
-  .product-details { font-size: 0.95rem; }
+  .product-details { font-size: 0.95rem; text-align: center; }
   .related-title { font-size: 0.9rem; }
+  .related-card { min-width: 120px; }
 }
