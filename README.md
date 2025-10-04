@@ -1,16 +1,79 @@
-# React + Vite
+# Prueba técnica de Jose Imbaquinga  
+📞 Teléfono: 0999819224  
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🌐 Demo en línea
+Puedes ver la aplicación desplegada en Vercel:  
+[https://prueba-tecnica-txsz.vercel.app](https://prueba-tecnica-txsz.vercel.app)  
 
-Currently, two official plugins are available:
+## 📌 Descripción  
+Este repositorio contiene el desarrollo de una **prueba técnica** realizada por **Jose Imbaquinga**, enfocada en demostrar habilidades en desarrollo de software, principalmente con **React (Vite)**, **Redux**, consumo de APIs y buenas prácticas de programación.  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+El proyecto se centra en la creación de un **sistema de inventario** con funcionalidades como:  
+- Gestión de productos.  
+- Creación, edición y eliminación de registros.  
+- Búsqueda y filtrado dinámico.  
+- Integración con Redux para manejo global del estado.  
+- Interfaz responsiva y moderna con CSS y animaciones.  
+- Despliegue en **Vercel**.  
+https://prueba-tecnica-txsz.vercel.app
 
-## React Compiler
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Tecnologías utilizadas  
+- **Frontend**: React + Vite  
+- **Estado global**: Redux Toolkit  
+- **Estilos**: CSS responsivo con media queries y animaciones  
+- **Interacciones**: SweetAlert2 para modales  
+- **Despliegue**: Vercel  
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## ⚙️ Funcionalidades principales  
+1. **Gestión de productos (CRUD)**  
+   - Agregar un nuevo producto.  
+   - Editar datos de productos existentes.  
+   - Eliminar productos de forma controlada (con confirmación).  
+
+2. **Búsqueda en tiempo real**  
+   - Filtrado por nombre o categoría.  
+   - Mensaje dinámico cuando no se encuentran resultados.  
+
+3. **Interfaz de usuario**  
+   - Diseño moderno, responsivo y adaptable a móviles y tablets.  
+   - Animaciones suaves al mostrar/ocultar elementos.  
+   - Sección de productos relacionados y otros productos destacados.  
+
+4. **Autenticación básica (con token)**  
+   - Inicio de sesión con validación.  
+   - Token guardado en `localStorage`.  
+   - Cierre de sesión con limpieza de datos.  
+
+---
+
+## 📂 Estructura del proyecto  
+├── src
+│ ├── components # Componentes reutilizables
+│ ├── redux # Slices y store de Redux
+│ ├── styles # Archivos CSS
+│ ├── App.jsx # Componente principal
+│ └── main.jsx # Punto de entrada con Vite
+├── public # Recursos estáticos
+├── package.json # Dependencias del proyecto
+└── vite.config.js # Configuración de Vite
+
+
+---
+
+## ▶️ Cómo ejecutar el proyecto  
+
+### 1. Clonar el repositorio  
+
+git clone [<url-del-repositorio>](https://github.com/jrimbaquingaguana/Prueba_Tecnica.git)
+
+
+### 2.- Instalar dependencias
+
+npm install
+
+### 3.- Ejecutar en modo desarrollo
+npm run dev
+
