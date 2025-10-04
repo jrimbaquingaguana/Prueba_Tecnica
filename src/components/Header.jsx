@@ -3,7 +3,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 import { FaSignOutAlt } from "react-icons/fa"; // ícono de logout
-import "../styles/header.css";
+import "../styles/Header.css";
 
 function Header() {
   const dispatch = useDispatch();
