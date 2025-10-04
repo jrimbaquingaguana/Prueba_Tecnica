@@ -78,20 +78,19 @@ body {
   align-items: center;
   gap: 6px;
   padding: 10px 20px;
-  background-color: #1abc9c; /* verde turquesa */
+  background-color: #206ff0; /* verde turquesa */
   color: #fff;
   border: none;
   border-radius: 25px;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(26, 188, 156, 0.3);
 }
 
 .btn-create:hover {
-  background-color: #16a085; /* verde más oscuro */
+  background-color: #4172ff; /* verde más oscuro */
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(22, 160, 133, 0.4);
+  box-shadow: #4172ff ;
 }
 
 /* Tabla */
@@ -181,6 +180,7 @@ body {
   color: white;
   transition: all 0.2s ease;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  flex-wrap: nowrap;
 }
 
 .btn-details { background-color: #3498db; }

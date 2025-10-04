@@ -1,18 +1,13 @@
-// src/components/CrearProducto.jsx
 import React, { useState } from "react";
 import Swal from "sweetalert2";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import "../styles/CrearProducto.css";
 
 // Redux
-import { createProduct } from "../redux/productSlice";
+import { createProduct, addLocalProduct } from "../redux/productSlice";
 
-const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
+const CrearProducto = ({ isOpen, onClose, onCreate }) => {
   const dispatch = useDispatch();
-  const items = useSelector((state) => state.products.items);
-
-  // Obtenemos categorías únicas de los productos existentes
-  const categories = [...new Set(items.map((p) => p.category).filter(Boolean))];
 
   const [formData, setFormData] = useState({
     title: "",
@@ -29,10 +24,8 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name === "price" && Number(value) <= 0) return;
     if (name === "stock" && Number(value) <= 0) return;
-
     setFormData({ ...formData, [name]: value });
   };
 
@@ -50,37 +43,30 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
     setPreviewImages(newImages.map((file) => URL.createObjectURL(file)));
   };
 
-  const handleCategoryChange = (e) => {
-    setFormData({ ...formData, category: e.target.value });
-    setNewCategory(""); // limpiar nueva categoría si se selecciona existente
-  };
-
-  const handleNewCategoryChange = (e) => {
-    setNewCategory(e.target.value);
-    setFormData({ ...formData, category: "" }); // limpiar categoría seleccionada
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.title) {
+    if (!formData.title.trim()) {
       Swal.fire("Error", "El título es obligatorio.", "error");
       return;
     }
-
     if (Number(formData.price) <= 0) {
       Swal.fire("Error", "El precio debe ser mayor a 0.", "error");
       return;
     }
-
     if (Number(formData.stock) <= 0) {
       Swal.fire("Error", "El stock debe ser mayor a 0.", "error");
       return;
     }
 
-    const finalCategory = newCategory.trim() !== "" ? newCategory.trim() : formData.category;
+    const finalCategory =
+      newCategory.trim() !== "" ? newCategory.trim() : formData.category;
     if (!finalCategory) {
-      Swal.fire("Error", "Debes seleccionar o ingresar una categoría.", "error");
+      Swal.fire(
+        "Error",
+        "Debes seleccionar o ingresar una categoría.",
+        "error"
+      );
       return;
     }
 
@@ -101,21 +87,50 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
       images: imageUrls,
     };
 
+    // Guardar siempre localmente primero
+    dispatch(addLocalProduct(productToSend));
+
     try {
       const token = JSON.parse(localStorage.getItem("auth"))?.token;
-      const created = await dispatch(createProduct({ token, product: productToSend })).unwrap();
 
-      Swal.fire("¡Éxito!", `Producto "${created.title}" creado correctamente.`, "success");
+      // Intentar crear en la API
+      const created = await dispatch(
+        createProduct({ token, product: productToSend })
+      ).unwrap();
 
-      setFormData({ title: "", price: 1, category: "", description: "", stock: 1, images: [] });
-      setPreviewImages([]);
-      setNewCategory("");
+      // Usar title del API o fallback al local
+      const productTitle = created?.title || productToSend.title;
 
-      onCreate(created);
-      onClose();
+      Swal.fire(
+        "¡Éxito!",
+        `Producto "${productTitle}" creado correctamente.`,
+        "success"
+      );
+
+      if (onCreate) onCreate(created || productToSend);
+
     } catch (err) {
-      Swal.fire("Error", err.message || "Error al crear producto", "error");
+      // Si falla la API, ya está guardado localmente
+      Swal.fire(
+        "Atención",
+        `Producto "${productToSend.title}" guardado localmente.`,
+        "warning"
+      );
+      if (onCreate) onCreate(productToSend);
     }
+
+    // Limpiar formulario
+    setFormData({
+      title: "",
+      price: 1,
+      category: "",
+      description: "",
+      stock: 1,
+      images: [],
+    });
+    setPreviewImages([]);
+    setNewCategory("");
+    onClose();
   };
 
   return (
@@ -125,49 +140,70 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
         <form onSubmit={handleSubmit} className="modal-create-form">
           <label>
             Título:
-            <input type="text" name="title" value={formData.title} onChange={handleChange} required />
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+            />
           </label>
 
           <label>
             Precio:
-            <input type="number" name="price" value={formData.price} onChange={handleChange} min={1} required />
+            <input
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              min={1}
+              required
+            />
           </label>
 
           <label>
             Stock:
-            <input type="number" name="stock" value={formData.stock} onChange={handleChange} min={1} required />
+            <input
+              type="number"
+              name="stock"
+              value={formData.stock}
+              onChange={handleChange}
+              min={1}
+              required
+            />
           </label>
 
           <label>
             Categoría:
-            <select value={formData.category} onChange={handleCategoryChange}>
-              <option value="">Ingresar categoría</option>
-              {categories.map((cat, idx) => (
-                <option key={idx} value={cat}>{cat}</option>
-              ))}
-            </select>
+            <input
+              type="text"
+              name="category"
+              placeholder="Categoría"
+              value={formData.category || newCategory}
+              onChange={(e) => {
+                setFormData({ ...formData, category: e.target.value });
+                setNewCategory("");
+              }}
+            />
           </label>
-
-          {formData.category === "" && (
-            <label>
-              O crear nueva categoría:
-              <input
-                type="text"
-                value={newCategory}
-                onChange={handleNewCategoryChange}
-                placeholder="Nueva categoría"
-              />
-            </label>
-          )}
 
           <label>
             Descripción:
-            <textarea name="description" value={formData.description} onChange={handleChange}></textarea>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+            ></textarea>
           </label>
 
           <label>
             Imágenes:
-            <input type="file" multiple accept="image/*" onChange={handleImageChange} />
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageChange}
+            />
           </label>
 
           {previewImages.length > 0 && (
@@ -175,18 +211,28 @@ const CrearProducto = ({ isOpen, onClose, onCreate, loading }) => {
               {previewImages.map((src, idx) => (
                 <div key={idx} className="preview-container">
                   <img src={src} alt={`preview-${idx}`} className="preview-img" />
-                  <button type="button" className="remove-image" onClick={() => handleRemoveImage(idx)}>×</button>
+                  <button
+                    type="button"
+                    className="remove-image"
+                    onClick={() => handleRemoveImage(idx)}
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
             </div>
           )}
 
           <div className="modal-buttons">
-            <button type="button" className="btn-cancel" onClick={onClose} disabled={loading}>
+            <button
+              type="button"
+              className="btn-cancel"
+              onClick={onClose}
+            >
               Cancelar
             </button>
-            <button type="submit" className="btn-confirm" disabled={loading}>
-              {loading ? "Creando..." : "Crear"}
+            <button type="submit" className="btn-confirm">
+              Crear
             </button>
           </div>
         </form>

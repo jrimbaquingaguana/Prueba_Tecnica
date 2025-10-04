@@ -1,7 +1,7 @@
 /* Header: ocupa toda la pantalla */
 .header {
   width: 100%;
-  background-color: #1f3a93; 
+  background-color: #03045e; 
   display: flex;
   justify-content: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -68,7 +68,6 @@
 }
 
 .logout-button:hover {
-  background-color: #081f4c;
   transform: scale(1.05);
 }
 

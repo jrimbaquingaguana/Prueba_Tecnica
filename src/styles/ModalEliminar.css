@@ -1,21 +1,23 @@
-/* ModalEliminar.css */
-
-/* Fondo transparente absoluto con blur */
+/* -------------------
+   Fondo transparente y blur
+------------------- */
 .swal2-container {
-  position: absolute !important;
+  position: fixed !important; /* cubre toda la ventana */
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.2) !important;
-  backdrop-filter: blur(4px);
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4) !important; /* negro semi-transparente */
+  backdrop-filter: blur(4px); /* desenfoque del fondo */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999 !important;
 }
 
-/* Contenedor del modal */
+/* -------------------
+   Contenedor del modal
+------------------- */
 .swal2-popup-custom {
   border-radius: 12px;
   padding: 2rem;
@@ -23,30 +25,46 @@
   max-width: 90%;
   text-align: center;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  background-color: #fff;
+  position: relative;
+  z-index: 10000;
 }
 
-/* Botón confirmar */
+/* -------------------
+   Botón confirmar (rojo por la fuerza)
+------------------- */
 .swal2-confirm-custom {
   position: absolute;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #e74c3c !important;
-  color: #fff !important;
+  background-color: #e74c3c !important; /* rojo intenso */
+  color: #ffffff !important;
   padding: 10px 20px;
   border-radius: 6px;
   font-size: 1rem;
+  font-weight: 700;
   cursor: pointer;
-  z-index: 9999;
+  border: 2px solid #c0392b !important;
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.5) !important;
   transition: all 0.2s ease;
+  z-index: 10001;
 }
 
 .swal2-confirm-custom:hover {
   background-color: #c0392b !important;
+  border-color: #992d22 !important;
+  box-shadow: 0 6px 12px rgba(192, 57, 43, 0.7) !important;
 }
 
-/* Botón cancelar gris */
+/* -------------------
+   Botón cancelar (gris)
+------------------- */
 .swal2-cancel-custom {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: #e0e0e0 !important;
   color: #333 !important;
   padding: 10px 20px;
@@ -54,6 +72,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
+  z-index: 10001;
 }
 
 .swal2-cancel-custom:hover {
@@ -85,17 +104,13 @@
     padding: 1rem;
   }
 
-  .swal2-confirm-custom {
+  .swal2-confirm-custom,
+  .swal2-cancel-custom {
     position: relative; /* en móvil no forzamos absolute */
     bottom: auto;
     left: auto;
     transform: none;
     width: 100%;
     margin-top: 1rem;
-  }
-
-  .swal2-cancel-custom {
-    width: 100%;
-    margin-top: 0.5rem;
   }
 }

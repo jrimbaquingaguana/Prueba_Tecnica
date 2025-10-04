@@ -13,20 +13,32 @@ function EditarProducto({ token }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { product, loading, saving, error } = useSelector((state) => state.products);
+  const { product, loading, saving, error, items } = useSelector(
+    (state) => state.products
+  );
 
+  // Cargar producto: primero buscar en localStorage y luego en API si no existe
   useEffect(() => {
-    dispatch(fetchProduct({ id, token }));
-  }, [id, token, dispatch]);
+    const localProduct = items.find((p) => String(p.id) === id);
+    if (localProduct) {
+      dispatch(updateLocalProduct(localProduct)); // carga local
+    } else {
+      dispatch(fetchProduct({ id, token }));
+    }
+  }, [id, token, dispatch, items]);
 
+  // Manejo de cambios en inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
-    dispatch(updateLocalProduct({ [name]: value }));
+
+    // Mandamos también el id para que el slice actualice items y localStorage
+    dispatch(updateLocalProduct({ id: product.id, [name]: value }));
   };
 
+  // Guardar cambios
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateProduct({ id, token, product }))
+    dispatch(updateProduct({ id: product.id, token, product }))
       .unwrap()
       .then(() => {
         alert("Producto actualizado correctamente");
@@ -46,39 +58,79 @@ function EditarProducto({ token }) {
       <form className="edit-form" onSubmit={handleSubmit}>
         <label>
           Título:
-          <input type="text" name="title" value={product.title} onChange={handleChange} required />
+          <input
+            type="text"
+            name="title"
+            value={product.title || ""}
+            onChange={handleChange}
+            required
+          />
         </label>
 
         <label>
           Categoría:
-          <input type="text" name="category" value={product.category} onChange={handleChange} required />
+          <input
+            type="text"
+            name="category"
+            value={product.category || ""}
+            onChange={handleChange}
+            required
+          />
         </label>
 
         <label>
           Descripción:
-          <textarea name="description" value={product.description} onChange={handleChange} required />
+          <textarea
+            name="description"
+            value={product.description || ""}
+            onChange={handleChange}
+            required
+          />
         </label>
 
         <label>
           Precio:
-          <input type="number" name="price" value={product.price} onChange={handleChange} required />
+          <input
+            type="number"
+            name="price"
+            value={product.price || 0}
+            onChange={handleChange}
+            required
+          />
         </label>
 
         <label>
           Rating:
-          <input type="number" step="0.1" name="rating" value={product.rating} onChange={handleChange} required />
+          <input
+            type="number"
+            step="0.1"
+            name="rating"
+            value={product.rating || 0}
+            onChange={handleChange}
+            required
+          />
         </label>
 
         <label>
           Stock:
-          <input type="number" name="stock" value={product.stock} onChange={handleChange} required />
+          <input
+            type="number"
+            name="stock"
+            value={product.stock || 0}
+            onChange={handleChange}
+            required
+          />
         </label>
 
         <div className="form-buttons">
           <button type="submit" disabled={saving} className="btn-save">
             {saving ? "Guardando..." : "Guardar cambios"}
           </button>
-          <button type="button" onClick={() => navigate(-1)} className="btn-cancel">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="btn-cancel"
+          >
             Cancelar
           </button>
         </div>

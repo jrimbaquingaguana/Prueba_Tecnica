@@ -135,9 +135,8 @@ const productSlice = createSlice({
       state.error = null;
     },
 
-    // Nuevo producto local (se guarda directamente en localStorage)
     addLocalProduct: (state, action) => {
-      const newProduct = { ...action.payload, id: Date.now() }; // ID único
+      const newProduct = { ...action.payload, id: Date.now() };
       state.items.push(newProduct);
       state.product = newProduct;
       saveToLocalStorage(state.items);
@@ -152,8 +151,12 @@ const productSlice = createSlice({
 
     updateLocalProduct: (state, action) => {
       state.product = { ...state.product, ...action.payload };
-      const idx = state.items.findIndex((p) => p.id === action.payload.id);
-      if (idx !== -1) state.items[idx] = { ...state.items[idx], ...action.payload };
+
+      // Actualiza el item en items si existe
+      const idx = state.items.findIndex((p) => p.id === state.product.id);
+      if (idx !== -1) state.items[idx] = { ...state.items[idx], ...state.product };
+
+      // Guardar siempre en localStorage
       saveToLocalStorage(state.items);
     },
 
@@ -212,8 +215,10 @@ const productSlice = createSlice({
       .addCase(updateProduct.fulfilled, (state, action) => {
         state.saving = false;
         state.product = action.payload;
+
         const idx = state.items.findIndex((p) => p.id === action.payload.id);
         if (idx !== -1) state.items[idx] = action.payload;
+
         saveToLocalStorage(state.items);
       })
       .addCase(updateProduct.rejected, (state, action) => {
@@ -230,9 +235,7 @@ const productSlice = createSlice({
         state.saving = false;
 
         const exists = state.items.some((p) => p.id === action.payload.id);
-        if (!exists) {
-          state.items.push(action.payload);
-        }
+        if (!exists) state.items.push(action.payload);
 
         state.product = action.payload;
         saveToLocalStorage(state.items);

@@ -63,8 +63,8 @@
 .modal-create-form textarea:focus,
 .modal-create-form select:focus {
   outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+  border-color: #4a90e2;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
 }
 
 /* Botones */
@@ -96,12 +96,12 @@
 }
 
 .btn-confirm {
-  background-color: #4caf50;
+  background-color: #1536ed;
   color: #fff;
 }
 
 .btn-confirm:hover {
-  background-color: #43a047;
+  background-color: #4a90e2;
   transform: scale(1.05);
 }
 
