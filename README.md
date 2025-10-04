@@ -22,7 +22,8 @@ El proyecto se centra en la creación de un **sistema de inventario** con funcio
 - **Estado global**: Redux Toolkit  
 - **Estilos**: CSS responsivo con media queries y animaciones  
 - **Interacciones**: SweetAlert2 para modales  
-- **Despliegue**: Vercel  
+- **Despliegue**: Vercel
+- **Testing**: Vitest + React Testing Library
 
 ---
 
@@ -51,11 +52,15 @@ El proyecto se centra en la creación de un **sistema de inventario** con funcio
 ## 📂 Estructura del proyecto
 ```text
 src/
+├── assets       # Imágenes
 ├── components   # Componentes reutilizables
+├── pages        # Páginas principales
 ├── redux        # Slices y store de Redux
-├── styles       # Archivos CSS
+├── styles       # Archivos CSS       
+├── test         # Pruebas unitarias e integración
 ├── App.jsx      # Componente principal
 └── main.jsx     # Punto de entrada con Vite
+
 public/          # Recursos estáticos
 package.json     # Dependencias del proyecto
 vite.config.js   # Configuración de Vite
@@ -78,4 +83,30 @@ npm install
 ### 3.- Ejecutar en modo desarrollo
 ```text
 npm run dev
+```
+
+🧪 Pruebas / Testing
+
+Se implementaron pruebas unitarias y de integración para asegurar el correcto funcionamiento del sistema:
+
+Redux (productSlice.js)
+
+Test de reducers (addLocalProduct, removeProduct, updateLocalProduct, setSearch, setSort, setPage, clearError)
+
+Test de thunks (fetchProducts, fetchProduct, createProduct, updateProduct) usando mock de fetch y mock de dispatch
+
+Verificación de que los productos se guardan correctamente en localStorage
+
+Componentes React (CrearProducto)
+
+Apertura y cierre del modal
+
+Validación de campos requeridos (ej: categoría obligatoria)
+
+Simulación de creación de producto y verificación de llamadas a dispatch y Swal.fire
+
+### 1.- Ejecutar los test
+```text
+npm run test
+```
 ```
