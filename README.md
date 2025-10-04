@@ -89,13 +89,16 @@ npm run dev
 
 Se implementaron pruebas unitarias y de integración para asegurar el correcto funcionamiento del sistema:
 
-1. **Redux (productSlice.js)**
-   - Test de reducers:
+1. **Testear el productSlice.js**
+   - Test de reducers=
       addLocalProduct, removeProduct, updateLocalProduct, setSearch, setSort, setPage, clearError
-   - Test de thunks:
+   - Test de thunks=
       fetchProducts, fetchProduct, createProduct, updateProduct
    - Verificación de que los productos se guardan correctamente en localStorage
-3. **Componentes React (CrearProducto)**
+3. **Testear el authSlice.js**
+   - Inicio de sesión (loginUser) con éxito o error.
+   - Carga de autenticación desde localStorage (loadStoredAuth).
+   - Cierre de sesión (logout).
 ### 1.- Ejecutar los test
 ```text
 npm run test
