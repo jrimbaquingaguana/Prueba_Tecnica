@@ -209,6 +209,11 @@
   .thumbnail { width: 60px; height: 60px; }
   .volver-btn { padding: 10px 16px; font-size: 0.9rem; }
   .related-card { min-width: 130px; }
+
+  /* Otros productos en tablets */
+  .other-grid { 
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+  }
 }
 
 /* Celulares */
@@ -220,4 +225,10 @@
   .product-details { font-size: 0.95rem; text-align: center; }
   .related-title { font-size: 0.9rem; }
   .related-card { min-width: 120px; }
+
+  /* Otros productos en celulares */
+  .other-grid { 
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+  }
+  .other-title { font-size: 0.85rem; }
 }
