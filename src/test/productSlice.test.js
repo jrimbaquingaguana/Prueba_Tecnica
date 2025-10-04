@@ -1,4 +1,3 @@
-// src/test/productSlice.test.js
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import reducer, {
   addLocalProduct,
@@ -14,23 +13,14 @@ import reducer, {
   updateProduct,
 } from "../redux/productSlice";
 
-// ----------------------
-// Helpers LocalStorage
-// ----------------------
 beforeEach(() => {
   localStorage.clear();
   vi.restoreAllMocks();
 });
 
-// ----------------------
-// Mock fetch global
-// ----------------------
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
-// ----------------------
-// Reducers Unit Tests
-// ----------------------
 describe("productSlice reducers", () => {
   const initialState = {
     items: [],
@@ -88,9 +78,6 @@ describe("productSlice reducers", () => {
   });
 });
 
-// ----------------------
-// Thunks Async Tests
-// ----------------------
 describe("productSlice thunks", () => {
   const dispatch = vi.fn();
   const getState = () => ({ auth: { token: "token123" } });
