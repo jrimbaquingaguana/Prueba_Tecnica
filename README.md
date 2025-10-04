@@ -67,7 +67,7 @@ vite.config.js   # Configuración de Vite
 
 git clone 
 ```text
-[<url-del-repositorio>](https://github.com/jrimbaquingaguana/Prueba_Tecnica.git)
+git clone https://github.com/jrimbaquingaguana/Prueba_Tecnica.git
 ```
 
 ### 2.- Instalar dependencias
