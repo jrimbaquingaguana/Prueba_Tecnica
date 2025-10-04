@@ -59,7 +59,7 @@ src/
 public/          # Recursos estáticos
 package.json     # Dependencias del proyecto
 vite.config.js   # Configuración de Vite
-
+```
 
 ## ▶️ Cómo ejecutar el proyecto  
 
